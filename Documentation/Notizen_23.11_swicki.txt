@@ -1,0 +1,50 @@
+
+Registrierung
+=============
+
+- Username eingeben
+ - beim Spielsart wird User-ID vom Server vergeben
+ - bei weiteren Logins für das Spiel muss User-ID angegeben werden
+    - ansonsten ist Login ungültig
+ - ist Spiel zu ende wird User-ID verworfen
+ 
+Userhandling
+============
+
+- Communication Layer hat Interface für neuen Client
+- Server ist verantwortlich dafür die Clients im Memory zu halten und User zu assoziieren.
+
+- Spielunterbruch
+    - Bei Spielwiedereinstieg
+        - Server schickt zuerst dem Spieler seine Züge
+        - danach alle anderen Züge
+
+Threading
+=========
+
+- Jeder Client (Socket) hat eigene Klasse die den Socket hält und in einem
+  eigenen Thread lebt. Der registrierte Client-Handler wird also vom Clientthread
+  ausgeführt.
+  
+Datenbank
+=========
+
+- CouchDB, MongoDB - irgendwas was JSON speichern kann
+
+Milestone 1:
+============
+
+    - Simples Usermatching mit Username oder Quickmatch (keine Difficulty)
+    - Pencilmarks (Clientseitig)
+    - Nur 1vs1 Matches
+        - gleiches Spielfeld mit gleichen Werten
+        - Score (rudimentär)
+    - GUI?
+        - Orientierung fixen
+    - 
+
+Milestone 2:
+============
+
+    - Spielunterbruch und -wiedereinstieg
+    - Serverunterrbuch und -wiedereinstieg
