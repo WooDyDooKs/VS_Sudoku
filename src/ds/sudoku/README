@@ -1,0 +1,5 @@
+client			->	GUI Team
+server			-> 	server team
+exceptions		->	subfolders for each teams custom exceptions
+logic			-> 	game logic team
+communication	->	communications team
