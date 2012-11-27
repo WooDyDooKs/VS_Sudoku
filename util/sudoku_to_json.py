@@ -48,7 +48,7 @@ for sline in solution:
             'solution_id' : solution_id,
             'difficulty' : difficulty
         }, solutions_json)
-        solution_cells_json.write('\n')
+        solutions_json.write('\n')
 
         row = 1
         continue
