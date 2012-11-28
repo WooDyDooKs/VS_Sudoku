@@ -1,4 +1,4 @@
-package cd.sudoku.communication;
+package ds.sudoku.communication;
 
 public abstract class Message {
 }
