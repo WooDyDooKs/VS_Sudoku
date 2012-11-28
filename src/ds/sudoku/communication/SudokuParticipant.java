@@ -17,7 +17,7 @@ public interface SudokuParticipant {
          * @param column the column in which the value should be put.
          * @param value the value which the field should be set to (normally 0...9).
          */ 	
-	public void setField(int row, int column, int value),
+	public void setField(int row, int column, int value);
 
         /**
          * Set the field at {@code index} to {@code value}.
