@@ -1,181 +1,137 @@
 package ds.sudoku.communication;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
+import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
-import ds.sudoku.exceptions.communication.NoSuchTypeException;
-import ds.sudoku.exceptions.communication.NoSuchPropertyException;;
+import ds.sudoku.communication.serialization.Serializable;
+import ds.sudoku.exceptions.communication.DeserializationException;
+import ds.sudoku.exceptions.communication.NoSuchPropertyException;
 
 /**
  * The basic message class provides functionality to store
  * arbitrary data. Upon sending, the stored data will be transformed
  * to JSON and deserialized when received. 
  * 
- * <p>
+ * 
  * @author dalhai
  *
  */
 public abstract class Message {
-	//	A queue of lists of JsonElement representing custom objects
-	//	serialized into the message.
-	Queue<List<JsonElement>> customValues;
-	//	A list of JsonObjects representing custom key - value pairs
-	//	stored in the message.
-	JsonObject customFields;
+	
+	private int currentCustomValue;
+	private List<String> customValues;
+	private Map<String, String> customProperties;
 	
 	/**
-	 * Adds a custom property - value pair to the message.
+	 * Create a new, empty message.
+	 */
+	public Message() {
+		this.currentCustomValue = -1;
+		this.customValues = new ArrayList<>();
+		this.customProperties = new HashMap<>();
+	}
+	
+	/**
+	 * Add a custom property to the message.
+	 * If a property with the given name already exists, its value will
+	 * be replaced by the new value.
 	 * @param property The name of the property.
 	 * @param value The value of the property.
 	 */
-	public void addCustomField(String property, String value) {
-		if(customFields == null)
-			customFields = new JsonObject();
-		
-		customFields.addProperty(property, value);
+	public void addCustomProperty(String property, String value) {
+		customProperties.put(property, value);
 	}
 	
 	/**
-	 * Get the value of the custom field.
-	 * @param property The name of the requested property.
+	 * Get the requested property out of the message, if possible.
+	 * @param property Name of the requested property.
 	 * @return The value of the requested property.
+	 * @throws NoSuchPropertyException
+	 * 				Thrown when the requested property does
+	 * 				not exists in this message.
 	 */
-	public String getCustomField(String property) 
-		throws NoSuchPropertyException {
-		if(customFields == null) 
+	public String getCustomProperty(String property) 
+	throws NoSuchPropertyException {
+		if(!customProperties.containsKey(property))
 			throw new NoSuchPropertyException();
 		
-		String valueFound = null;
-		try {
-			JsonElement elem = customFields.get(property);
-			valueFound = elem.getAsString();
-		} catch(JsonSyntaxException e) {
-			throw new NoSuchPropertyException();
-		}
-		
-		return valueFound;
+		return customProperties.get(property);
 	}
 	
 	/**
-	 * Adds an arbitrary number of objects to the message.
-	 * The objects will be deserialized in the same order as they
-	 * are provided here.
-	 * @param type The type of the information to be added.
-	 * @param input The information to be added.
+	 * Checks if there is another custom value available.
+	 * If true, the next custom value can be accessed with 
+	 * {@link #getNextCustomValue}.
+	 * @return {@code true}, if there is another custom value,
+	 * 			{@code false}, else.
 	 */
-	public <T extends Object> void addCustomValues(T... input) {
-		if(input.length == 0) return;
-		
-		Gson json = new Gson();
-		
-		//	Convert to a json element and store it
-		List<JsonElement> values = new ArrayList<JsonElement>();
-		for(T item : input) 
-			values.add(json.toJsonTree(item));
-		
-		//	if custom values are null, initialize them
-		if(customValues == null) customValues = new LinkedList<List<JsonElement>>();
-		
-		//	Add all values
-		customValues.add(values);
+	public boolean hasCustomValue() {
+		return currentCustomValue < customValues.size();
 	}
 	
 	/**
-	 * Get the next list of values from the message.
-	 * If the next list of values does not match the requested type, 
-	 * throws an exception.
+	 * Add a custom value. The custom value to be added must implement
+	 * the {@link Serializable} interface. The serialized input will be
+	 * stored and sent with the message.
 	 * 
 	 * <p>
-	 * Removes the requested elements from the message.
-	 * 
-	 * @param type The requested type.
-	 * @return A List of objects of the requested type, if available. Else,
-	 * 		   {@code null}.
-	 * @throws NoSuchTypeException Thrown if the requested type is not available.
+	 * The receiver can then provide the type of the object to be
+	 * deserialized to the {@link #getNextCustomValue} method.
+	 * @param input
 	 */
-	public <T extends Object> List<T> getNextCustomValues(Class<T> type) 
-			throws NoSuchTypeException  {
-		
-		if(customValues == null || customValues.isEmpty()) return null;
-		
-		Gson json = new Gson();
-		
-		//	Convert back from json element to an actual object
-		List<T> results = new ArrayList<T>();
-		List<JsonElement> values = customValues.peek();
-		
-		if(values == null)
-			throw new NoSuchTypeException();
-		
-		//	Deserialize values
-		try {
-			for(JsonElement value : values) {
-				T deserialized = json.fromJson(value, type);
-				results.add(deserialized);
-			}
-		} catch (JsonSyntaxException e) {
-			throw new NoSuchTypeException();
-		}
-		
-		customValues.remove();
-				
-		return results;
+	public void addCustomValue(Serializable input) {
+		customValues.add(input.serialize());
 	}
 	
 	/**
-	 * Check if the message has custom values available.
-	 * @return 
-	 * 			{@code true}, if not all custom values have been processed,
-	 * 			{@code false}, else.
+	 * Deserialize the next custom value if possible. 
+	 * @param target The target serialization object.
+	 * @return The deserialized object.
+	 * @throws DeserializationException
+	 * 				Thrown, if the target object could not be deserialized
+	 * 				from the current string.
 	 */
-	public boolean hasCustomValues() {
-		return customValues != null && !customValues.isEmpty();
+	public <T extends Serializable> T getNextCustomValue(T target)	
+	throws DeserializationException {		
+		//	Check if there is another string.
+		if(++currentCustomValue >= customValues.size())
+			throw new DeserializationException();
+		
+		//	We are in bounds, get the target string		
+		String source = customValues.get(currentCustomValue);
+		
+		//	Deserialize the string.
+		target.deserialize(source);
+		return target;
 	}
 	
 	/**
-	 * Check if the message has custom field available.
+	 * Get a map of all custom properties stored in this {@link Message}.
+	 * The returned map is unmodifiable.
 	 * @return
-	 * 			{@code true}, if not all custom fields have been processed,
-	 * 			{@code false}, else.
 	 */
-	public boolean hasCustomFields() {
-		return customFields != null;
+	public Map<String, String> getCustomProperties() {
+		return Collections.unmodifiableMap(customProperties);
 	}
 	
 	/**
-	 * Convert the message to a JSON representation.
-	 * @return The message as JSON string.
+	 * Get a list of all custom values stored in this {@link Message}.
+	 * The returned list is unmodifiable.
+	 * @return An unmodifiable list of all custom values.
 	 */
-	public String toJson() {
-		JsonObject message = new JsonObject();
-		
-		//	Add all custom fields
-		message.add("CustomFields", customFields);
-		
-		//	Create JsonElements for custom values.
-		JsonArray customValuesElement = new JsonArray();
-		for(List<JsonElement> elements : customValues) {
-			JsonArray list = new JsonArray();
-			//	Add every element of the list
-			for(JsonElement element : elements) {
-				list.add(element);
-			}
-			customValuesElement.add(list);
-		}
-		
-		//	Add the custom values
-		message.add("CustomValues", customValuesElement);
-		
-		//	Conver to json
-		Gson json = new Gson();
-		return json.toJson(message);
+	public List<String> getCustomValues() {
+		return Collections.unmodifiableList(customValues);
 	}
+	
+	/**
+	 * Every successor of {@link Message} must provide its type as a
+	 * String. This String will be added to the JSON output and will
+	 * determine the type of message generated on the receiver side.
+	 * 
+	 * @return The type of the message as string.
+	 */
+	public abstract String getMessageType();
 }

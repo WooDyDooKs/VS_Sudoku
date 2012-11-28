@@ -6,4 +6,9 @@ package ds.sudoku.communication;
  * <p>Should be used in a clearly defined protocol only.
  */
 public class ACKMessage extends Message {
+
+	@Override
+	public String getMessageType() {
+		return "ACKMessage";
+	}
 }
