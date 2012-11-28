@@ -1,4 +1,4 @@
-import re, json
+import re, json, random
 
 """
     sudoku_to_json.py - a simple script to convert text sudokus to json
@@ -46,7 +46,8 @@ for sline in solution:
         solution_id += 1
         json.dump({
             'solution_id' : solution_id,
-            'difficulty' : difficulty
+            'difficulty' : difficulty,
+            'random' : random.random()
         }, solutions_json)
         solutions_json.write('\n')
 

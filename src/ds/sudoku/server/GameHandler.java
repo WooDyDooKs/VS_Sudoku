@@ -46,7 +46,7 @@ public class GameHandler implements Runnable {
 		gameID = game.get("_id").toString();
 		
 		// add cells for game
-		cells = db.getCollection(DBHelper.CELLS);
+		cells = db.getCollection(DBHelper.GAMECELLS);
 		for(int row=1; row<10; row++) {
 			for(int col=1; col<10; col++) {
 				BasicDBObject cell = createCellDBObject(row, col);

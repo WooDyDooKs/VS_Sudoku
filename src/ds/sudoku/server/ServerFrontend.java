@@ -15,7 +15,7 @@ public class ServerFrontend {
 
 	public static void main(String[] args) {
 		
-		SudokuSolution s = new SudokuSolution(1);
+		SudokuSolution s = SudokuSolution.getRandomSolution();
 		Player p1 = new Player("nicu");
 		Player p2 = new Player("wicki");
 		List<Player> l = Arrays.asList(p1, p2);

@@ -8,9 +8,13 @@ import com.mongodb.Mongo;
 public class DBHelper {
 
 	public static final String DB_NAME = "vs_sudoku";
+	
 	public static final String GAMES = "games";
+	public static final String GAMECELLS = "games.cells";
+	
 	public static final String SOLUTIONS = "solutions";
-	public static final String CELLS = "cells";
+	public static final String SOLUTIONCELLS = "solutions.cells";
+	
 	public static final String USERS = "users";
 
 
