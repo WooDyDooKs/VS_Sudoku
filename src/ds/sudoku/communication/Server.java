@@ -7,7 +7,7 @@ public interface Server {
 	public void joinName(String otherPlayer);
 	public void joinRandom();
 	public void leave();
-	public void setField(int x, int y, int value),
+	public void setField(int x, int y, int value);
 	public void setField(int index, int value);
 	public void sendError(String message);
 	public void ACK();
