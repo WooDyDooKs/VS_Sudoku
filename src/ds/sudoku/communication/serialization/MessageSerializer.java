@@ -11,14 +11,11 @@ import java.util.Set;
 import ds.sudoku.communication.Message;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 
 /**
@@ -40,8 +37,7 @@ import com.google.gson.JsonSerializer;
  * @author dalhai
  *
  */
-public class MessageSerializer 
-implements JsonSerializer<Message> {
+public class MessageSerializer {
 
 	/**
 	 * Serialize the given message into a {@link JsonElement} using
@@ -51,11 +47,10 @@ implements JsonSerializer<Message> {
 	 * @param context The context in which the serialization takes place.
 	 * @return The serialized message.
 	 */
-	@Override
 	public JsonElement serialize(Message message, Type type,
 		JsonSerializationContext context) {
-		final Map<String, String> properties = message.getCustomProperties();
-		final Set<Entry<String, String>> entries = properties.entrySet();
+		final Map<String, String> customProperties = message.getCustomProperties();
+		final Set<Entry<String, String>> entries = customProperties.entrySet();
 		final List<String> customValues = message.getCustomValues();
 		
 		//	Map the custom properties into a json object
@@ -73,9 +68,14 @@ implements JsonSerializer<Message> {
 		
 		//	Put everything together
 		JsonObject jsonMessage = new JsonObject();
+		//	Add message type
 		jsonMessage.addProperty(SerializationKeys.MESSAGE_TYPE_KEY, message.getMessageType());
-		jsonMessage.add(SerializationKeys.CUSTOM_PROPERTIES_KEY, customJsonProperties);
-		jsonMessage.add(SerializationKeys.CUSTOM_VALUES_KEY, customJsonValues);
+		//	If there are properties, add them.
+		if(!customProperties.isEmpty())
+			jsonMessage.add(SerializationKeys.CUSTOM_PROPERTIES_KEY, customJsonProperties);
+		//	If there are values, add them.
+		if(!customValues.isEmpty())
+			jsonMessage.add(SerializationKeys.CUSTOM_VALUES_KEY, customJsonValues);
 		
 		return jsonMessage;
 	}

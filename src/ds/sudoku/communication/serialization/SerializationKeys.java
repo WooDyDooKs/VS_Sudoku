@@ -25,8 +25,20 @@ public final class SerializationKeys {
 	public static final String CUSTOM_PROPERTIES_KEY = "CustomProperties";
 	
 	/**
-	 * This String will be used as the key for hte list of custom
+	 * This String will be used as the key for the list of custom
 	 * values inside the {@link Message} class.
 	 */
 	public static final String CUSTOM_VALUES_KEY = "CustomValues";
+
+	/**
+	 * This String will be used as the key for the desired name
+	 * of a client registering via a {@link RegisterMessage}.
+	 */
+	public static final String NAME_KEY = "Name";
+
+	/**
+	 * This String will be used as the key for the token sent
+	 * to a client upon registration in a {@link RegisterMessage}.
+	 */
+	public static final String TOKEN_KEY = "Token";
 }

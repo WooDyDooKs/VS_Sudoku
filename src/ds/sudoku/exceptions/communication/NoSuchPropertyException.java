@@ -1,5 +1,11 @@
 package ds.sudoku.exceptions.communication;
 
+/**
+ * This exception is thrown whenever a requested property does not
+ * exist.
+ * @author dalhai
+ *
+ */
 public class NoSuchPropertyException extends RuntimeException {
 
 	/**

@@ -1,5 +1,12 @@
 package ds.sudoku.exceptions.communication;
 
+/**
+ * This exception is thrown whenever something went wrong in a 
+ * deserialization process because of the data provided for
+ * deserialization was not in the corret format.
+ * @author dalhai
+ *
+ */
 public class DeserializationException extends RuntimeException {
 
 	/**
