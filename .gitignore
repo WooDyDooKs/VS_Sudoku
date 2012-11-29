@@ -3,6 +3,9 @@ bin/
 bin-debug/
 bin-release/
 
+# Private test folders
+test/
+
 # Other files and folders
 .settings/
 

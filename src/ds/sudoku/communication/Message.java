@@ -30,8 +30,20 @@ public abstract class Message {
 	 */
 	public Message() {
 		this.currentCustomValue = -1;
-		this.customValues = new ArrayList<>();
-		this.customProperties = new HashMap<>();
+		this.customValues = new ArrayList<String>();
+		this.customProperties = new HashMap<String, String>();
+	}
+	
+	/**
+	 * Creates a new message with the given custom values and properties.
+	 * @param customValues The custom values stored in this message.
+	 * @param customProperties The custom properties stored in this message.
+	 */
+	public Message(List<String> customValues,
+		Map<String, String> customProperties) {
+		this.currentCustomValue = -1;
+		this.customValues = customValues;
+		this.customProperties = customProperties;
 	}
 	
 	/**

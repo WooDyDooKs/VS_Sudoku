@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>VS_Sudoku_Server</name>
+	<name>VS_Sudoku_Communication</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -18,7 +18,13 @@
 		<link>
 			<name>src</name>
 			<type>2</type>
-			<location>PARENT-2-PROJECT_LOC/src</location>
+			<locationURI>copy_PARENT/src</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>copy_PARENT</name>
+			<value>$%7BPARENT-1-ECLIPSE_HOME%7D/VS_Sudoku</value>
+		</variable>
+	</variableList>
 </projectDescription>
