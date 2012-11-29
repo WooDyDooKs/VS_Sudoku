@@ -45,7 +45,7 @@ for sline in solution:
         # create new solution
         solution_id += 1
         json.dump({
-            'solution_id' : solution_id,
+            '_id' : solution_id,
             'difficulty' : difficulty,
             'random' : random.random()
         }, solutions_json)

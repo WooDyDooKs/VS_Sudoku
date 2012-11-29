@@ -2,17 +2,17 @@ package ds.sudoku.server;
 
 public class GameMove {
 
-	private Player executingPlayer;
+	private User executingPlayer;
 	private int row, column, value;
 	
-	GameMove(Player executingPlayer, int row, int column, int value) {
+	GameMove(User executingPlayer, int row, int column, int value) {
 		this.executingPlayer = executingPlayer;
 		this.row = row;
 		this.column = column;
 		this.value = value;
 	}
 	
-	public Player getExecutingPlayer() {
+	public User getExecutingPlayer() {
 		return executingPlayer;
 	}
 	

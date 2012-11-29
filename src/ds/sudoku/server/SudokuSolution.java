@@ -7,7 +7,7 @@ import com.mongodb.DBObject;
 
 public class SudokuSolution {
 	
-	enum Difficulty {
+	public enum Difficulty {
 		VERY_EASY("very easy"),
 		EASY("easy"),
 		MEDIUM("medium"),
@@ -36,28 +36,21 @@ public class SudokuSolution {
 		this.solutionID = solutionID;
 		
 		ref = new BasicDBObject();
-		ref.put("solution_id", solutionID);		
+		ref.put("solution_id", solutionID);
 	}
 	
 	public static SudokuSolution getRandomSolution() {
 		DB db = DBHelper.getDB();
 		DBCollection solutions = db.getCollection(DBHelper.SOLUTIONS);
-
-		double random = Math.random();
+		
 		BasicDBObject query = new BasicDBObject();
-		query.put("random", new BasicDBObject().append("$gte", random));
+		DBObject solution = DBHelper.getRandomDocument(query, solutions);
 		
-		DBObject solution = solutions.findOne(query);
-		if(solution == null) {
-			query.put("random", new BasicDBObject().append("$lte", random));
-			solution = solutions.findOne(query);
-		}
-		
-		int solutionID =((Number) solution.get("solution_id")).intValue();		
+		int solutionID =((Number) solution.get("_id")).intValue();		
 		return new SudokuSolution(solutionID);
 	}
 
-	int getField(int row, int column) {
+	public int getField(int row, int column) {
 		ref.put("row", row);
 		ref.put("column", column);
 		DBObject cell = cells.findOne(ref);
@@ -65,7 +58,7 @@ public class SudokuSolution {
 		return ((Number) cell.get("value")).intValue();
 	}
 	
-	boolean isClue(int row, int column) {
+	public boolean isClue(int row, int column) {
 		ref.put("row", row);
 		ref.put("column", column);
 		DBObject cell = cells.findOne(ref);
@@ -73,7 +66,7 @@ public class SudokuSolution {
 		return (Boolean) cell.get("clue");
 	}
 	
-	int getSolutionID() {
+	public int getSolutionID() {
 		return solutionID;
 	}
 

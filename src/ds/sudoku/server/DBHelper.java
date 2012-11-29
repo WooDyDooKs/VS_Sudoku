@@ -2,7 +2,10 @@ package ds.sudoku.server;
 
 import java.net.UnknownHostException;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 
 public class DBHelper {
@@ -19,6 +22,19 @@ public class DBHelper {
 
 
 	private static DB db;
+	
+	public static DBObject getRandomDocument(BasicDBObject query, DBCollection coll) {
+		double random = Math.random();
+		
+		query.put("random", new BasicDBObject().append("$gte", random));		
+		DBObject user = coll.findOne(query);
+		if(user == null) {
+			query.put("random", new BasicDBObject().append("$lte", random));
+			user = coll.findOne(query);
+		}
+		
+		return user;
+	}
 		
 	public static synchronized DB getDB() {
 		if(db == null) {
