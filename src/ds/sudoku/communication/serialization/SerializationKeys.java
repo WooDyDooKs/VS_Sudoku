@@ -38,7 +38,13 @@ public final class SerializationKeys {
 
 	/**
 	 * This String will be used as the key for the token sent
-	 * to a client upon registration in a {@link RegisterMessage}.
+	 * to a client upon registration in a {@link TokenizedMessage}.
 	 */
 	public static final String TOKEN_KEY = "Token";
+
+	/**
+	 * This String will be used as the key for the reason sent
+	 * to a client upon an event that requires a reason.
+	 */
+	public static final String REASON_KEY = null;
 }

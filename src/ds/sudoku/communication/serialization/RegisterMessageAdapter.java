@@ -65,17 +65,17 @@ implements JsonDeserializer<RegisterMessage>, JsonSerializer<RegisterMessage> {
 	public JsonElement serialize(RegisterMessage message, Type type,
 			JsonSerializationContext context) {
 		JsonElement jsonMessageElement = super.serialize(message, type, context);
-		JsonObject jsonMessage = jsonMessageElement.getAsJsonObject();
+		JsonObject jsonMessageObject = jsonMessageElement.getAsJsonObject();
 		
-		//	jsonMessage has the custom properties, custom values and
+		//	jsonMessageObject has the custom properties, custom values and
 		//	the message type already stored. We just need to add new
 		//	properties for our fields.
-		jsonMessage.addProperty(SerializationKeys.NAME_KEY, message.getName());
+		jsonMessageObject.addProperty(SerializationKeys.NAME_KEY, message.getName());
 		//	Add the token, if a token is available.
 		if(message.hasToken())
-			jsonMessage.addProperty(SerializationKeys.TOKEN_KEY, message.getToken());
+			jsonMessageObject.addProperty(SerializationKeys.TOKEN_KEY, message.getToken());
 		
-		return jsonMessage;
+		return jsonMessageObject;
 	}
 
 }
