@@ -1,5 +1,8 @@
 package ds.sudoku.communication;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * This message is sent to tell the receiver that the described
  * field should be set to the value passed within the message.
@@ -116,12 +119,38 @@ public class SetFieldMessage extends Message {
 	 * @param sudokuWidth The number of columns per row.
 	 * @param sudokuHeight The number of rows per column.
 	 */
-	public SetFieldMessage(int index, int value, boolean zeroBased, int sudokuWidth, int sudokuHeight) {
+	public SetFieldMessage(int index, int value, boolean zeroBased,
+	        int sudokuWidth, int sudokuHeight) {
 		this.zeroBased = zeroBased;
 		this.sudokuWidth = sudokuWidth;
 		this.sudokuHeight = sudokuHeight;
 		this.index = index;
 		this.value = value;
+	}
+	
+	/**
+	 * Create a new message which expresses, that the field described by the given
+	 * {@code index} should be set to the given {@code value}. Additionally, if
+	 * {@code zeroBased} is true, the sudoku field is assumed to be zero based.
+	 * using this constructor, you are also allowed to set the assumed width
+	 * and height of the sudoku field.
+	 * @param index The index of the target field.
+	 * @param value The value to assign to the target field.
+	 * @param zeroBased If true, t he sudoku field is assumed to be zero based.
+	 * @param sudokuWidth The number of columns per row.
+	 * @param sudokuHeight The number of rows per column.
+	 * @param customValues The custom values stored in this message.
+	 * @param customProperties The custom properties stored in this message.
+	 */
+	public SetFieldMessage(int index, int value, boolean zeroBased,
+	        int sudokuWidth, int sudokuHeight,
+	        List<String> customValues, Map<String, String> customProperties) {
+	    super(customValues, customProperties);
+	    this.zeroBased = zeroBased;
+	    this.sudokuWidth = sudokuWidth;
+	    this.sudokuHeight = sudokuHeight;
+	    this.index = index;
+	    this.value = value;
 	}
 	
 	/**
@@ -162,7 +191,7 @@ public class SetFieldMessage extends Message {
 	 * @return The row to be set to the value.
 	 */
 	public int getRow() {
-	    if(zeroBased)
+	    if(!zeroBased)
 	        return ((index - 1) / sudokuWidth) + 1;
 	    return index / sudokuWidth;
 	}
@@ -172,7 +201,7 @@ public class SetFieldMessage extends Message {
 	 * @return The column to be set to the value.
 	 */
 	public int getColumn() {
-		if(zeroBased)
+		if(!zeroBased)
 		    return ((index - 1) % sudokuWidth) + 1;
 		return index % sudokuWidth;
 	}

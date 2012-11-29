@@ -46,5 +46,37 @@ public final class SerializationKeys {
 	 * This String will be used as the key for the reason sent
 	 * to a client upon an event that requires a reason.
 	 */
-	public static final String REASON_KEY = null;
+	public static final String REASON_KEY = "Reason";
+
+	/**
+	 * This String will be used as the key for the index sent to
+	 * a client in a {@link SetFieldMessage}.
+	 */
+    public static final String INDEX_KEY = "Index";
+
+    /**
+     * This String will be used as the key for the width of the sudoku
+     * field sent to a client in a {@link SetFieldMessage} or a 
+     * {@link SudokuMessage}.
+     */
+    public static final String SUDOKU_WIDTH_KEY = "SudokuWidth";
+
+    /**
+     * This String will be used as the key for the height of the sudoku
+     * field sent to a client in a {@link SetFieldMessage} or a 
+     * {@link SudokuMessage}.
+     */
+    public static final String SUDOKU_HEIGHT_KEY = "SudokuHeight";
+
+    /**
+     * This String will be used as they key for a property describing if
+     * a sudoku field index is zero based or not.
+     */
+    public static final String ZERO_BASED_KEY = "ZeroBased";
+
+    /**
+     * This String will be used as the key for a property describing
+     * a value.
+     */
+    public static final String VALUE_KEY = "Value";
 }
