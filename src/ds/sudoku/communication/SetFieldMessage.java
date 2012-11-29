@@ -1,9 +1,195 @@
 package ds.sudoku.communication;
 
+/**
+ * This message is sent to tell the receiver that the described
+ * field should be set to the value passed within the message.
+ * @author dalhai
+ *
+ */
 public class SetFieldMessage extends Message {
 
+	/**
+	 * The assumed width of a sudoku field when not provided
+	 * other values.
+	 */
+	public static final int DEFAULT_SUDOKU_WIDTH = 9;
+	
+	/**
+	 * The assumed height of a sudoku field when not provided
+	 * other values.
+	 */
+	public static final int DEFAULT_SUDOKU_HEIGHT = 9;
+	
+	/**
+	 * Per default, the sudoku field is assumed to be zero based.
+	 */
+	public static final boolean DEFAULT_ZERO_BASED = true;
+	
+	private final boolean zeroBased;
+	
+	private final int sudokuWidth;
+	private final int sudokuHeight;
+	private final int index;
+	private final int value;
+	
+	/**
+	 * Create a new message which expresses, that the field in row {@code row} 
+	 * and column {@code column} should be set to {@code value}. 
+	 * @param row The row of the target field.
+	 * @param column The column of the target field.
+	 * @param value The value to assign to the target field.
+	 */
+	public SetFieldMessage(int row, int column, int value) {
+		this(row, column, value, DEFAULT_ZERO_BASED);
+	}
+	
+	/**
+	 * Create a new message which expresses, that the field in row {@code row}
+	 * and column {@code column} should be set to {@code value}. Additionally,
+	 * if {@code zeroBased} is true, the sudoku field is assumed to be zero based.
+	 * @param row The row of the target field.
+	 * @param column The column of the target field.
+	 * @param value The value to assign to the target field.
+	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
+	 */
+	public SetFieldMessage(int x, int y, int value, boolean zeroBased) {
+		this(x, y, value, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
+	}
+	
+	/**
+	 * Create a new message which expresses, that the field in row {@code row}
+	 * and column {@code column} should be set to {@code value}. Additionally,
+	 * if {@code zeroBased} is true, the sudoku field is assumed to be zero based.
+	 * Using this constructor, you are also allowed to set the assumed width and
+	 * height of the sudoku field.
+	 * @param row The row of the target field.
+	 * @param column The column of the target field.
+	 * @param value The value to assign to the target field.
+	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
+	 * @param sudokuWidth The number of columns per row.
+	 * @param sudokuHeight The number of rows per column.
+	 */
+	public SetFieldMessage(int row, int column, int value, boolean zeroBased, 
+			int sudokuWidth, int sudokuHeight) {
+		this(
+		        zeroBased ? 
+		                row * sudokuWidth + column :
+		                (row - 1) * sudokuWidth + column,
+		        value, 
+		        zeroBased, 
+		        sudokuWidth, 
+		        sudokuHeight
+		    );
+	}
+	
+	/**
+	 * Create a new message which expresses, that the field described by the given
+	 * {@code index} should be set to the given {@code value}.
+	 * @param index The index of the target field.
+	 * @param value The value to assign to the target field.
+	 */
+	public SetFieldMessage(int index, int value) {
+		this(index, value, DEFAULT_ZERO_BASED);
+	}
+	
+	/**
+	 * Create a new message which expresses, that the field described by the given
+	 * {@code index} should be set to the given {@code value}. Additionally, if
+	 * {@code zeroBased} is true, the sudoku field is assumed to be zero based.
+	 * @param index The index of the target field.
+	 * @param value The value to assign to the target field.
+	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
+	 */
+	public SetFieldMessage(int index, int value, boolean zeroBased) {
+		this(index, value, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
+	}
+	
+	/**
+	 * Create a new message which expresses, that the field described by the given
+	 * {@code index} should be set to the given {@code value}. Additionally, if
+	 * {@code zeroBased} is true, the sudoku field is assumed to be zero based.
+	 * Using this constructor, you are also allowed to set the assumed width and
+	 * height of the sudoku field.
+	 * @param index The index of the target field.
+	 * @param value The value to assign to the target field.
+	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
+	 * @param sudokuWidth The number of columns per row.
+	 * @param sudokuHeight The number of rows per column.
+	 */
+	public SetFieldMessage(int index, int value, boolean zeroBased, int sudokuWidth, int sudokuHeight) {
+		this.zeroBased = zeroBased;
+		this.sudokuWidth = sudokuWidth;
+		this.sudokuHeight = sudokuHeight;
+		this.index = index;
+		this.value = value;
+	}
+	
+	/**
+	 * Returns the message type of this message as a string.
+	 * @return The message type.
+	 */
 	@Override
 	public String getMessageType() {
 		return "SetFieldMessage";
+	}
+	
+	/**
+	 * Get the index stored in this message.
+	 * @return The target index of the value.
+	 */
+	public int getIndex() {
+		return index;
+	}
+	
+	/**
+	 * Get the width of the sudoku field assumed in this message.
+	 * @return The assumed width of the sudoku field.
+	 */
+	public int getSudokuWidth() {
+		return sudokuWidth;
+	}
+	
+	/**
+	 * Get the height of the sudoku field assumed in this message.
+	 * @return The assumed height of the sudoku field.
+	 */
+	public int getSudokuHeight() {
+		return sudokuHeight;
+	}
+	
+	/**
+	 * Get the target row for the value stored in this message.
+	 * @return The row to be set to the value.
+	 */
+	public int getRow() {
+	    if(zeroBased)
+	        return ((index - 1) / sudokuWidth) + 1;
+	    return index / sudokuWidth;
+	}
+	
+	/**
+	 * Get the target column for the value stored in this message.
+	 * @return The column to be set to the value.
+	 */
+	public int getColumn() {
+		if(zeroBased)
+		    return ((index - 1) % sudokuWidth) + 1;
+		return index % sudokuWidth;
+	}
+	
+	/**
+	 * Get the value stored in this message.
+	 * @return The value to be set.
+	 */
+	public int getValue() {
+		return value;
+	}
+	
+	/**
+	 * Check if the message is assumed to be zero based or not.
+	 * @return {@code true}, if zero based, {@code false}, else.
+	 */
+	public boolean isZeroBased() {
+		return zeroBased;
 	}
 }
