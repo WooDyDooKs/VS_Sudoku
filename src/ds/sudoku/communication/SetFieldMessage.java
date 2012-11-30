@@ -26,7 +26,7 @@ public class SetFieldMessage extends Message {
 	/**
 	 * Per default, the sudoku field is assumed to be zero based.
 	 */
-	public static final boolean DEFAULT_ZERO_BASED = true;
+	public static final boolean DEFAULT_ZERO_BASED = false;
 	
 	private final boolean zeroBased;
 	
@@ -55,8 +55,8 @@ public class SetFieldMessage extends Message {
 	 * @param value The value to assign to the target field.
 	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
 	 */
-	public SetFieldMessage(int x, int y, int value, boolean zeroBased) {
-		this(x, y, value, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
+	public SetFieldMessage(int row, int column, int value, boolean zeroBased) {
+		this(row, column, value, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
 	}
 	
 	/**
