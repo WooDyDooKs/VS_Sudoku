@@ -18,13 +18,7 @@
 		<link>
 			<name>src</name>
 			<type>2</type>
-			<locationURI>copy_PARENT/src</locationURI>
+			<location>PARENT-2-PROJECT_LOC/src</location>
 		</link>
 	</linkedResources>
-	<variableList>
-		<variable>
-			<name>copy_PARENT</name>
-			<value>$%7BPARENT-1-ECLIPSE_HOME%7D/VS_Sudoku</value>
-		</variable>
-	</variableList>
 </projectDescription>

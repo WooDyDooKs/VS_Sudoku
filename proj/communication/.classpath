@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="ds/sudoku/server/|ds/sudoku/exceptions/server/" kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry excluding="ds/sudoku/exceptions/server/|ds/sudoku/server/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="../../libs/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="../../libs/mongo-2.9.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
