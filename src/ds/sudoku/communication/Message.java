@@ -15,6 +15,10 @@ import ds.sudoku.exceptions.communication.NoSuchPropertyException;
  * arbitrary data. Upon sending, the stored data will be transformed
  * to JSON and deserialized when received. 
  * 
+ * <p>
+ * <b>Note:</b><br>
+ * The custom properties and custom values are there for use if no
+ * message type already implemented provides the 
  * 
  * @author dalhai
  *
