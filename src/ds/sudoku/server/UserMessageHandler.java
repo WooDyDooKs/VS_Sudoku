@@ -44,7 +44,8 @@ public class UserMessageHandler extends DefaultMessageHandler {
 
 	@Override
 	public void onLeaveMessageReceived(LeaveMessage message) {
-		// TODO what to do?		
+		gamesManager.addIdleUser(user);
+		user.getGame().getHandler().stopGame();
 	}
 
 	@Override

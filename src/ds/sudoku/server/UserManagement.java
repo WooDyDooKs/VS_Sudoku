@@ -30,35 +30,43 @@ public class UserManagement {
 	 * @throws AlreadyExistingUsername 
 	 */
 	public synchronized User register(String username, Client client) throws AlreadyExistingUsername {
-		BasicDBObject dbUser = new BasicDBObject();
+//		BasicDBObject dbUser = new BasicDBObject();
+//		
+//		dbUser.put("username", username);
+//		
+//		if(dbUsers.findOne(dbUser) != null) {
+//			throw new AlreadyExistingUsername();
+//		}
+//		
+//		dbUsers.insert(dbUser);
+//		
+//		String id = dbUser.getString("_id");
 		
-		dbUser.put("username", username);
-		
-		if(dbUsers.findOne(dbUser) != null) {
+		if(connectedUsers.containsKey(username)) {
 			throw new AlreadyExistingUsername();
 		}
 		
-		dbUsers.insert(dbUser);
-		
-		String id = dbUser.getString("_id");
-		User user = new User(username, id, client);
+		String id = UUID.randomUUID().toString();
+		User user = new User(id, username, client);
 		
 		connectedUsers.put(username, user);
-		
+		ServerFrontend.gamesManager.addIdleUser(user);
 		return user;
 	}
 	
 	
 	public synchronized void deregister(User user) throws NonExistingUsername {		
-		BasicDBObject dbUser = new BasicDBObject();
-		dbUser.put("username", user.getUsername());
-		
-		if(dbUsers.findOne(dbUser) == null) {
-			throw new NonExistingUsername();
-		}
+//		BasicDBObject dbUser = new BasicDBObject();
+//		dbUser.put("username", user.getUsername());
+//		
+//		if(dbUsers.findOne(dbUser) == null) {
+//			throw new NonExistingUsername();
+//		}
 		
 		connectedUsers.remove(user.getUsername());
-		dbUsers.remove(dbUser);
+		ServerFrontend.gamesManager.removeIdleUser(user);
+
+//		dbUsers.remove(dbUser);
 	}
 
 	public synchronized User getUser(String username) {

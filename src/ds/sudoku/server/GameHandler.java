@@ -21,7 +21,14 @@ public class GameHandler implements Runnable {
 	}
 	
 	public void stopGame() {
-		actorThread.interrupt();
+		try {
+			actorThread.interrupt();
+			actorThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		game.destroy();
 	}
 	
 	public void setField(User player, int row, int column, int value) {

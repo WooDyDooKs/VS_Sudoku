@@ -2,6 +2,8 @@ package ds.sudoku.server;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -9,10 +11,13 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 
 public class Game {
-	public String gameID;
-	public SudokuSolution solution;
-	public List<User> players;
-	public DBCollection cells;
+	private String gameID;
+	private SudokuSolution solution;
+	private List<User> players;
+	
+	private DBCollection cells;
+	private DBCollection games;
+
 	private GameHandler handler;
 
 	public Game(SudokuSolution solution, List<User> players) {
@@ -21,7 +26,7 @@ public class Game {
 		
 		// add new game to games collection
 		DB db = DBHelper.getDB();
-		DBCollection games = db.getCollection(DBHelper.GAMES);
+		games = db.getCollection(DBHelper.GAMES);
 		BasicDBObject game = new BasicDBObject();
 		
 		// add players to game
@@ -63,7 +68,14 @@ public class Game {
 	}
 	
 	public void updateCell(GameMove gameMove) {
-		BasicDBObject searchedCell = createCellDBObject(gameMove.getRow(), gameMove.getColumn());
+		int row = gameMove.getRow();
+		int column = gameMove.getColumn();
+		
+		if(solution.isClue(row, column)) {
+			System.err.format("Field (%d,%d) is clue field!", row, column);
+		}
+		
+		BasicDBObject searchedCell = createCellDBObject(row, column);
 		searchedCell.put("clue", false);
 		
 		BasicDBObject updateValues = new BasicDBObject();
@@ -79,5 +91,25 @@ public class Game {
 	
 	public GameHandler getHandler() {
 		return handler;
+	}
+
+	public void destroy() {
+		for(User p : players) {
+			p.setGame(null);
+		}
+		
+		// remove from cells
+		BasicDBObject query = new BasicDBObject();
+		query.put("game_id", gameID);
+		cells.remove(query);
+		
+		// remove from games
+		query = new BasicDBObject();
+		query.put("_id", new ObjectId(gameID));
+		games.remove(query);
+	}
+	
+	public SudokuSolution getSolution() {
+		return solution;
 	}
 }

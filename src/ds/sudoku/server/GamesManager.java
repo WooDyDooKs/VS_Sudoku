@@ -7,7 +7,7 @@ import java.util.Queue;
 
 public class GamesManager {
 	
-	private Queue<User> idleUsers = new LinkedList<User>();
+	public Queue<User> idleUsers = new LinkedList<User>(); // TODO private
 	
 	public synchronized void addIdleUser(User user) {
 		idleUsers.add(user);
@@ -22,7 +22,8 @@ public class GamesManager {
 		p2.setGame(game);
 		
 		// TODO: this is slow and cumbersome
-		idleUsers.removeAll(players);
+		removeIdleUser(p1);
+		removeIdleUser(p2);
 		
 		GameHandler hander = new GameHandler(game);
 		hander.startGame();
@@ -30,9 +31,14 @@ public class GamesManager {
 	
 	public synchronized void startNewGameWithRandom(User p1) {
 		// TODO: what if no idle users?
-		User p2 = idleUsers.remove();
+		removeIdleUser(p1);
+		User p2 = idleUsers.peek();
 		
 		startNewGame(p1, p2);
+	}
+
+	public void removeIdleUser(User user) {
+		idleUsers.remove(user);
 	}
 
 }
