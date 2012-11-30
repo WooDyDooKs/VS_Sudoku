@@ -49,7 +49,19 @@ public class SudokuSolution {
 		int solutionID =((Number) solution.get("_id")).intValue();		
 		return new SudokuSolution(solutionID);
 	}
-
+	
+	public static SudokuSolution getRandomSolution(Difficulty difficulty) {
+		DB db = DBHelper.getDB();
+		DBCollection solutions = db.getCollection(DBHelper.SOLUTIONS);
+		
+		BasicDBObject query = new BasicDBObject();
+		query.put("difficulty", difficulty.toString());
+		DBObject solution = DBHelper.getRandomDocument(query, solutions);
+		
+		int solutionID =((Number) solution.get("_id")).intValue();		
+		return new SudokuSolution(solutionID);
+	}
+	
 	public int getField(int row, int column) {
 		ref.put("row", row);
 		ref.put("column", column);
@@ -68,6 +80,20 @@ public class SudokuSolution {
 	
 	public int getSolutionID() {
 		return solutionID;
+	}
+	
+	public SudokuTemplate createTemplate() {
+		int[][] template = new int[9][9];
+		
+		for(int row=0; row<9; row++) {
+			for(int col=0; col<9; col++) {
+				if(isClue(row+1, col+1)) {
+					template[row][col] = getField(row+1, col+1);
+				}
+			}
+		}
+		
+		return new SudokuTemplate(template);
 	}
 
 }
