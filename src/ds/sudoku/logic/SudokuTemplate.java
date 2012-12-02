@@ -1,4 +1,4 @@
-package ds.sudoku.server;
+package ds.sudoku.logic;
 
 public class SudokuTemplate {
 	
