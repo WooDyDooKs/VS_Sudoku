@@ -7,6 +7,9 @@ package ds.sudoku.communication;
  * <p>
  * Note that the handler methods will be invoked in a separate thread and must
  * therefore be secured against race conditions and parallel inconsistency.
+ * </p>
+ * 
+ * @author dalhai
  */
 public interface ClientMessageHandler {
 
