@@ -90,7 +90,7 @@ public class MessageSerializer {
 	 */
 	protected List<String> extractCustomValues(JsonObject jsonMessage)
 		throws JsonParseException {
-		final List<String> values = new ArrayList<>();
+		final List<String> values = new ArrayList<String>();
 		
 		//	Check if the given message has custom values.
 		if(jsonMessage.has(SerializationKeys.CUSTOM_VALUES_KEY)) {
@@ -116,7 +116,7 @@ public class MessageSerializer {
 	 */
 	protected Map<String, String> extractCustomProperties(JsonObject jsonMessage)
 		throws JsonParseException {	
-		final Map<String, String> properties = new HashMap<>();
+		final Map<String, String> properties = new HashMap<String, String>();
 	
 		//	Check if the given message has custom properties.
 		if(jsonMessage.has(SerializationKeys.CUSTOM_PROPERTIES_KEY)) {
