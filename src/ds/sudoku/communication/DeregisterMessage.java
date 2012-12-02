@@ -60,15 +60,6 @@ public class DeregisterMessage extends TokenizedMessage {
 	}
 
 	/**
-	 * Returns the message type of this message as a string.
-	 * @return The message type.
-	 */
-	@Override
-	public String getMessageType() {
-		return "DeregisterMessage";
-	}
-	
-	/**
 	 * Get the reason for the deregistration.
 	 * @return The reason sent with this message.
 	 */

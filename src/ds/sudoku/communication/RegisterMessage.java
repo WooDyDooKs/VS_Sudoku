@@ -51,15 +51,6 @@ public class RegisterMessage extends TokenizedMessage {
 	}
 	
 	/**
-	 * Returns the message type of this message class as a string.
-	 * @return The message type.
-	 */
-	@Override
-	public String getMessageType() {
-		return "RegisterMessage";
-	}
-	
-	/**
 	 * Get the name stored in the message.
 	 * @return The name sent with this message.
 	 */

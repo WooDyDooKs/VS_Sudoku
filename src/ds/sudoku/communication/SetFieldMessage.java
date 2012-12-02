@@ -154,15 +154,6 @@ public class SetFieldMessage extends Message {
 	}
 	
 	/**
-	 * Returns the message type of this message as a string.
-	 * @return The message type.
-	 */
-	@Override
-	public String getMessageType() {
-		return "SetFieldMessage";
-	}
-	
-	/**
 	 * Get the index stored in this message.
 	 * @return The target index of the value.
 	 */

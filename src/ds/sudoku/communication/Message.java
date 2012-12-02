@@ -149,5 +149,7 @@ public abstract class Message {
 	 * 
 	 * @return The type of the message as string.
 	 */
-	public abstract String getMessageType();
+	public String getMessageType() {
+	    return getClass().getName();
+	}
 }

@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import ds.sudoku.communication.Message;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -137,5 +136,4 @@ public class MessageSerializer {
 	
 		return properties;
 	}
-
 }
