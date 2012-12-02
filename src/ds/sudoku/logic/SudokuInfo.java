@@ -1,5 +1,5 @@
 // $Id: $
-package logic;
+package ds.sudoku.logic;
 import java.util.BitSet;
 
 public interface SudokuInfo{

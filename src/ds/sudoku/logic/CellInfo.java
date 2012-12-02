@@ -1,5 +1,5 @@
 // $Id: $
-package logic;
+package ds.sudoku.logic;
 
 public class CellInfo{
     int row;

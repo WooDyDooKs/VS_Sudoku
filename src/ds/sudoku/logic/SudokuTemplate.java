@@ -5,10 +5,11 @@ public class SudokuTemplate {
 	public static final int CLUE_VALUE = 0;
 	
 	private int[][] template;
-	
+
 	public SudokuTemplate(int[][] template) {
 		this.template = template;
 	}
+
 	
 	/**
 	 * Get the value for the specified field. 
@@ -19,7 +20,7 @@ public class SudokuTemplate {
 	 * @return
 	 */
 	public int getValue(int row, int column) {
-		return template[row-1][column-1];
+		return template[row - 1][column - 1];
 	}
 	
 	public int[][] getTemplate() {
