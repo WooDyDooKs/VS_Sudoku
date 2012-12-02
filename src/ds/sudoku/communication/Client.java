@@ -11,12 +11,14 @@ import ds.sudoku.logic.SudokuTemplate;
  * threaded and all calls to a handler will be triggered asynchronously, which
  * means that users of this interface must take care of locking datastructures
  * shared between clients.
+ * </p>
  * 
  * <p>
  * In the current design, the communication layer and therefore also the client
  * interface do not take care of implementing protocols, they just provide the
  * raw methods which can be invoked to communicate with the physical client
  * sitting at the other end of a connection.
+ * </p>
  */
 public interface Client extends Connection, SudokuParticipant {
 
@@ -88,7 +90,7 @@ public interface Client extends Connection, SudokuParticipant {
      * message from this client arrives.
      * 
      * @param handler
-     *            The message handler used to handle the incomming messages.
+     *            The message handler used to handle the incoming messages.
      */
     public void setMessageHandler(ClientMessageHandler handler);
 }
