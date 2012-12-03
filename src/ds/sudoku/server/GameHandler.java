@@ -53,6 +53,10 @@ public class GameHandler implements Runnable {
 				break;
 			}
 			
+			if(!isValidGameMove(nextMove)) {
+				// TODO send error
+			}
+			
 			String leadingUsername = score.updateScore(nextMove);
 			User leadingUser = userManagement.getUser(leadingUsername);
 			
@@ -68,7 +72,21 @@ public class GameHandler implements Runnable {
 		}
 	}
 	
-
+	public boolean isValidGameMove(GameMove gameMove) {
+		int row = gameMove.getRow();
+		int column = gameMove.getColumn();
+		int value = gameMove.getValue();
+		
+		if(!(
+				row    >= 1 && row    <= 9 && 
+				column >= 1 && column <= 9 &&
+				value  >= 1 && value  <= 9
+		)) {
+			return false;
+		}
+		
+		return game.getSolution().isClue(row, column);
+	}
 
 
 }
