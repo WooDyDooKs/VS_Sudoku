@@ -74,10 +74,6 @@ public class Game {
 		int row = gameMove.getRow();
 		int column = gameMove.getColumn();
 		
-		if(solution.isClue(row, column)) {
-			System.err.format("Field (%d,%d) is clue field!", row, column);
-		}
-		
 		BasicDBObject searchedCell = createCellDBObject(row, column);
 		searchedCell.put("clue", false);
 		
