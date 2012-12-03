@@ -28,12 +28,12 @@ public class SetFieldMessage extends Message {
 	 */
 	public static final boolean DEFAULT_ZERO_BASED = false;
 	
-	private final boolean zeroBased;
-	
+	private final boolean zeroBased;	
 	private final int sudokuWidth;
 	private final int sudokuHeight;
 	private final int index;
 	private final int value;
+	private final String sender;
 	
 	/**
 	 * Create a new message which expresses, that the field in row {@code row} 
@@ -41,9 +41,10 @@ public class SetFieldMessage extends Message {
 	 * @param row The row of the target field.
 	 * @param column The column of the target field.
 	 * @param value The value to assign to the target field.
+	 * @param sender Indicates the origin of this message.
 	 */
-	public SetFieldMessage(int row, int column, int value) {
-		this(row, column, value, DEFAULT_ZERO_BASED);
+	public SetFieldMessage(int row, int column, int value, String sender) {
+		this(row, column, value, sender, DEFAULT_ZERO_BASED);
 	}
 	
 	/**
@@ -53,10 +54,11 @@ public class SetFieldMessage extends Message {
 	 * @param row The row of the target field.
 	 * @param column The column of the target field.
 	 * @param value The value to assign to the target field.
+     * @param sender Indicates the origin of this message.
 	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
 	 */
-	public SetFieldMessage(int row, int column, int value, boolean zeroBased) {
-		this(row, column, value, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
+	public SetFieldMessage(int row, int column, int value, String sender, boolean zeroBased) {
+		this(row, column, value, sender, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
 	}
 	
 	/**
@@ -68,17 +70,19 @@ public class SetFieldMessage extends Message {
 	 * @param row The row of the target field.
 	 * @param column The column of the target field.
 	 * @param value The value to assign to the target field.
+     * @param sender Indicates the origin of this message.
 	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
 	 * @param sudokuWidth The number of columns per row.
 	 * @param sudokuHeight The number of rows per column.
 	 */
-	public SetFieldMessage(int row, int column, int value, boolean zeroBased, 
+	public SetFieldMessage(int row, int column, int value, String sender, boolean zeroBased, 
 			int sudokuWidth, int sudokuHeight) {
 		this(
 		        zeroBased ? 
 		                row * sudokuWidth + column :
 		                (row - 1) * sudokuWidth + column,
-		        value, 
+		        value,
+		        sender,
 		        zeroBased, 
 		        sudokuWidth, 
 		        sudokuHeight
@@ -90,9 +94,10 @@ public class SetFieldMessage extends Message {
 	 * {@code index} should be set to the given {@code value}.
 	 * @param index The index of the target field.
 	 * @param value The value to assign to the target field.
+     * @param sender Indicates the origin of this message.
 	 */
-	public SetFieldMessage(int index, int value) {
-		this(index, value, DEFAULT_ZERO_BASED);
+	public SetFieldMessage(int index, int value, String sender) {
+		this(index, value, sender, DEFAULT_ZERO_BASED);
 	}
 	
 	/**
@@ -101,10 +106,11 @@ public class SetFieldMessage extends Message {
 	 * {@code zeroBased} is true, the sudoku field is assumed to be zero based.
 	 * @param index The index of the target field.
 	 * @param value The value to assign to the target field.
+     * @param sender Indicates the origin of this message.
 	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
 	 */
-	public SetFieldMessage(int index, int value, boolean zeroBased) {
-		this(index, value, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
+	public SetFieldMessage(int index, int value, String sender, boolean zeroBased) {
+		this(index, value, sender, zeroBased, DEFAULT_SUDOKU_WIDTH, DEFAULT_SUDOKU_HEIGHT);
 	}
 	
 	/**
@@ -115,17 +121,20 @@ public class SetFieldMessage extends Message {
 	 * height of the sudoku field.
 	 * @param index The index of the target field.
 	 * @param value The value to assign to the target field.
+     * @param sender Indicates the origin of this message.
 	 * @param zeroBased If true, the sudoku field is assumed to be zero based.
 	 * @param sudokuWidth The number of columns per row.
 	 * @param sudokuHeight The number of rows per column.
 	 */
-	public SetFieldMessage(int index, int value, boolean zeroBased,
+	public SetFieldMessage(int index, int value, 
+	        String sender, boolean zeroBased,
 	        int sudokuWidth, int sudokuHeight) {
 		this.zeroBased = zeroBased;
 		this.sudokuWidth = sudokuWidth;
 		this.sudokuHeight = sudokuHeight;
 		this.index = index;
 		this.value = value;
+		this.sender = sender;
 	}
 	
 	/**
@@ -136,13 +145,15 @@ public class SetFieldMessage extends Message {
 	 * and height of the sudoku field.
 	 * @param index The index of the target field.
 	 * @param value The value to assign to the target field.
+     * @param sender Indicates the origin of this message.
 	 * @param zeroBased If true, t he sudoku field is assumed to be zero based.
 	 * @param sudokuWidth The number of columns per row.
 	 * @param sudokuHeight The number of rows per column.
 	 * @param customValues The custom values stored in this message.
 	 * @param customProperties The custom properties stored in this message.
 	 */
-	public SetFieldMessage(int index, int value, boolean zeroBased,
+	public SetFieldMessage(int index, int value, 
+	        String sender, boolean zeroBased,
 	        int sudokuWidth, int sudokuHeight,
 	        List<String> customValues, Map<String, String> customProperties) {
 	    super(customValues, customProperties);
@@ -151,6 +162,7 @@ public class SetFieldMessage extends Message {
 	    this.sudokuHeight = sudokuHeight;
 	    this.index = index;
 	    this.value = value;
+	    this.sender = sender;
 	}
 	
 	/**
@@ -211,5 +223,14 @@ public class SetFieldMessage extends Message {
 	 */
 	public boolean isZeroBased() {
 		return zeroBased;
+	}
+	
+	/**
+	 * Get the sender of this message. This string indicated where
+	 * the message was originally created.
+	 * @return The origin of the message as string.
+	 */
+	public String getSender() {
+	    return sender;
 	}
 }

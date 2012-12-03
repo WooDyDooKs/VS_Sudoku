@@ -79,4 +79,10 @@ public final class SerializationKeys {
      * a value.
      */
     public static final String VALUE_KEY = "Value";
+
+    /**
+     * This String will be used as the key for a property describing
+     * the originator of a message.
+     */
+    public static final String SENDER_KEY = "Sender";
 }

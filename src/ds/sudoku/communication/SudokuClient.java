@@ -265,12 +265,12 @@ public class SudokuClient implements Client {
     }
 
     @Override
-    public void setField(int row, int column, int value) {
+    public void setField(int row, int column, int value, String sender) {
         
     }
 
     @Override
-    public void setField(int index, int value) {        
+    public void setField(int index, int value, String sender) {        
     }
 
     @Override
@@ -284,7 +284,7 @@ public class SudokuClient implements Client {
     }
 
     @Override
-    public void invite(String otherPlayer) {        
+    public void invite(String otherPlayer) {
     }
 
     @Override

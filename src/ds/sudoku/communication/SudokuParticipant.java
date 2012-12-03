@@ -16,8 +16,9 @@ public interface SudokuParticipant {
          * @param row the row in which the value should be put.
          * @param column the column in which the value should be put.
          * @param value the value which the field should be set to (normally 0...9).
+         * @param sender A string indicating where the message came from.
          */ 	
-	public void setField(int row, int column, int value);
+	public void setField(int row, int column, int value, String sender);
 
         /**
          * Set the field at {@code index} to {@code value}.
@@ -32,6 +33,7 @@ public interface SudokuParticipant {
          *
          * @param index the index in which the value should be put.
          * @param value the value which the field should be set to (normally 0..9).
+         * @param sender A string indicating where the message came from.
          */
-	public void setField(int index, int value);
+	public void setField(int index, int value, String sender);
 }
