@@ -86,7 +86,7 @@ public interface ClientMessageHandler {
      * @param client
      *            The {@link Client} who sent the message.
      */
-    public void onACKReceived(Client client, ACKMessage message);
+    public void onACKMessageReceived(Client client, ACKMessage message);
 
     /**
      * Will be invoked when a negative confirmation is received.
