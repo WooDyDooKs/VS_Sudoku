@@ -1,25 +1,26 @@
 package ds.sudoku.server;
 
-import static ds.sudoku.server.ServerFrontend.userManagement;
-import static ds.sudoku.server.ServerFrontend.gamesManager;
-
+import ds.sudoku.communication.ACKMessage;
+import ds.sudoku.communication.Client;
 import ds.sudoku.communication.DeregisterMessage;
-import ds.sudoku.communication.JoinMessage;
+import ds.sudoku.communication.InviteMessage;
 import ds.sudoku.communication.LeaveMessage;
+import ds.sudoku.communication.NACKMessage;
 import ds.sudoku.communication.SetFieldMessage;
 import ds.sudoku.exceptions.server.NonExistingUsername;
+import static ds.sudoku.server.ServerFrontend.userManagement;
+import static ds.sudoku.server.ServerFrontend.gamesManager;
 
 public class UserMessageHandler extends DefaultMessageHandler {
 
 	private User user;
 
 	public UserMessageHandler(User user) {
-		super(user.getClient());
 		this.user = user;
 	}
-	
+
 	@Override
-	public void onDeregisterMessageReceived(DeregisterMessage message) {
+	public void onDeregisterMessageReceived(Client client, DeregisterMessage message) {
 		try {
 			userManagement.deregister(user);
 		} catch (NonExistingUsername e) {
@@ -29,12 +30,32 @@ public class UserMessageHandler extends DefaultMessageHandler {
 	}
 
 	@Override
-	public void onJoinMessageReceived(JoinMessage message) {
-		
+	public void onInviteMessageReceived(Client client, InviteMessage message) {
+		//TODO
+	}
+
+	@Override
+	public void onLeaveMessageReceived(Client client, LeaveMessage message) {
+		gamesManager.addIdleUser(user);
+		user.getGame().getHandler().stopGame();
+	}
+
+	@Override
+	public void onSetFieldMessageReceived(Client client, SetFieldMessage message) {
+		GameHandler handler = user.getGame().getHandler();
+		if(message.isZeroBased()) {
+			throw new RuntimeException("zero based indeces not (yet) supported!");
+		}
+		handler.setField(user, message.getRow(), message.getColumn(), message.getValue());
+		//TODO message.accept?
+	}
+
+	@Override
+	public void onACKMessageReceived(Client client, ACKMessage message) {
+		// test if ack is reply to inviteRequest
 		if(message.hasCustomValue()) {
 			// TODO: read other player from message
 			User other = userManagement.getUser(null);
-
 			gamesManager.startNewGame(user, other);
 		} else {
 			gamesManager.startNewGameWithRandom(user);
@@ -43,22 +64,9 @@ public class UserMessageHandler extends DefaultMessageHandler {
 	}
 
 	@Override
-	public void onLeaveMessageReceived(LeaveMessage message) {
-		gamesManager.addIdleUser(user);
-		user.getGame().getHandler().stopGame();
+	public void onNACKMessageReceived(Client client, NACKMessage message) {
+		// TODO Auto-generated method stub
+		super.onNACKMessageReceived(client, message);
 	}
-
-	@Override
-	public void onSetFieldMessageReceived(SetFieldMessage message) {
-		GameHandler handler = user.getGame().getHandler();
-		
-		if(message.isZeroBased()) {
-			throw new RuntimeException("zero based indeces not (yet) supported!");
-		}
-		
-		handler.setField(user, message.getRow(), message.getColumn(), message.getValue());
-		
-		//TODO message.accept?
-	}
-
+	
 }
