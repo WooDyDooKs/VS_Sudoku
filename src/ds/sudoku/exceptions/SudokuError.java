@@ -9,5 +9,12 @@ package ds.sudoku.exceptions;
  *
  */
 public enum SudokuError {
-	UNEXPECTED_MESSAGE_RECEIVED
+	UNEXPECTED_MESSAGE_RECEIVED,
+	
+	/** Registered username is already registered */
+	USERNAME_ALREADY_EXISTS,
+	/** Invited user does not exist */
+	USERNAME_DOES_NOT_EXIST,
+	/** Tried to set invalid field */ 
+	INVALID_FIELD_SET
 }
