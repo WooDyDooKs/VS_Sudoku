@@ -85,4 +85,6 @@ public final class SerializationKeys {
      * the originator of a message.
      */
     public static final String SENDER_KEY = "Sender";
+
+    public static final String IS_WINNING_KEY = "Winning";
 }
