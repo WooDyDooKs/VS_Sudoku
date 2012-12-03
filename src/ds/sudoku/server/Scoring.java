@@ -10,7 +10,7 @@ public class Scoring {
 	public Scoring(Game game){
 		this.game = game;
 		for (User us: game.getPlayers()){
-		scoreTable.put(us.getUsername(), 0);
+			scoreTable.put(us.getUsername(), 0);
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class Scoring {
 			}
 		} 
 		
-		//find highest score
+		// find highest score
 		Map.Entry<String, Integer> maxEntry = null;
 		for (Map.Entry<String, Integer> entry : scoreTable.entrySet()){
 			if( maxEntry == null || entry.getValue() > maxEntry.getValue()){
@@ -54,7 +54,7 @@ public class Scoring {
 			}
 		}
 		
-		//find player with that highest score
+		// return player with that highest score
 		return maxEntry.getKey();
 	}
 

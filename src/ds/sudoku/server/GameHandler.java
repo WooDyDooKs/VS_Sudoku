@@ -53,18 +53,15 @@ public class GameHandler implements Runnable {
 				break;
 			}
 			
-			String leadingPlayer = score.updateScore(nextMove);
-			User winningUser = userManagement.getUser(leadingPlayer);
+			String leadingUsername = score.updateScore(nextMove);
+			User leadingUser = userManagement.getUser(leadingUsername);
 			
 			game.updateCell(nextMove);
 			
-			for ( User us : game.getPlayers() ){
-				us.getClient().score(us == winningUser);
-				us.getClient().setField(nextMove.getRow(), nextMove.getColumn(), nextMove.getValue());
+			for (User user : game.getPlayers()) {
+				user.getClient().score(user == leadingUser);
+				user.getClient().setField(nextMove.getRow(), nextMove.getColumn(), nextMove.getValue(), user.getUsername());
 			}
-			
-				
-			
 			
 			
 			// TODO handle game move (send to players etc) 
