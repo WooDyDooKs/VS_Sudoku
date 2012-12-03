@@ -5,9 +5,12 @@ import ds.sudoku.communication.ConnectionHandler;
 
 public class DefaultConnectionHandler implements ConnectionHandler {
 
+	DefaultMessageHandler messageHandler = new DefaultMessageHandler();
+	
 	@Override
 	public void onNewConnectionAccepted(Client newClient) {
-		newClient.setMessageHandler(new DefaultMessageHandler(newClient));
+		newClient.setMessageHandler(messageHandler);
+		
 	}
 
 }

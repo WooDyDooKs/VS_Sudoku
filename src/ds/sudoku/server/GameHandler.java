@@ -2,12 +2,14 @@ package ds.sudoku.server;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import static ds.sudoku.server.ServerFrontend.userManagement;
 
 public class GameHandler implements Runnable {
 	
 	private Thread actorThread;
 	private BlockingQueue<GameMove> gameMoveQueue = new LinkedBlockingQueue<GameMove>();
 	private Game game;
+	private Scoring score;
 
 	public GameHandler(Game game) {
 		actorThread = new Thread(this);
@@ -50,8 +52,20 @@ public class GameHandler implements Runnable {
 			} catch (InterruptedException e) {
 				break;
 			}
-		
+			
+			String leadingPlayer = score.updateScore(nextMove);
+			User winningUser = userManagement.getUser(leadingPlayer);
+			
 			game.updateCell(nextMove);
+			
+			for ( User us : game.getPlayers() ){
+				us.getClient().score(us == winningUser);
+				us.getClient().setField(nextMove.getRow(), nextMove.getColumn(), nextMove.getValue());
+			}
+			
+				
+			
+			
 			
 			// TODO handle game move (send to players etc) 
 		}

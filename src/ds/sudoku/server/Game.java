@@ -2,6 +2,7 @@ package ds.sudoku.server;
 
 import java.util.List;
 
+import org.bson.types.BasicBSONList;
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBList;
@@ -52,6 +53,8 @@ public class Game {
 				cell.put("clue", solution.isClue(row, col));
 				if(solution.isClue(row, col)) {
 					cell.put("value", solution.getField(row, col));
+				} else{
+					cell.put("value", 0);
 				}
 				this.cells.insert(cell);
 			}
@@ -111,5 +114,19 @@ public class Game {
 	
 	public SudokuSolution getSolution() {
 		return solution;
+	}
+	
+	public int getField(int row, int column){
+		BasicDBObject searchedField = createCellDBObject(row, column);
+		return ((Number) cells.findOne(searchedField).get("value")).intValue();
+	}
+	
+	public String getUser(int row, int column){
+		BasicDBObject searchedField = createCellDBObject(row, column);
+		return ( cells.findOne(searchedField).get("player").toString() );
+	}
+	
+	public List<User> getPlayers(){
+		return players;
 	}
 }
