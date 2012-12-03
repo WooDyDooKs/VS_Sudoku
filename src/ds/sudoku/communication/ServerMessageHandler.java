@@ -113,4 +113,14 @@ public interface ServerMessageHandler {
      *          The {@link score Message} generated from the incoming data.
      */
     public void onScoreMessageReceived(Server server, ScoreMessage message);
+
+    /**
+     * Will be invoked when a new game message from target client is received.
+     * 
+     * @param message
+     *            The {@link NewGameMessage} generated from the incoming data.
+     * @param client
+     *            The {@link Client} who sent the message.
+     */
+    public void onNewGameMessageReceived(Client client, NewGameMessage message);
 }

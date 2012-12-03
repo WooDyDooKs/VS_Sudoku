@@ -48,16 +48,6 @@ public interface ClientMessageHandler {
     public void onInviteMessageReceived(Client client, InviteMessage message);
 
     /**
-     * Will be invoked when a new game message from target client is received.
-     * 
-     * @param message
-     *            The {@link NewGameMessage} generated from the incoming data.
-     * @param client
-     *            The {@link Client} who sent the message.
-     */
-    public void onNewGameMessageReceived(Client client, NewGameMessage message);
-
-    /**
      * Will be invoked when a leave message is received.
      * 
      * @param message
