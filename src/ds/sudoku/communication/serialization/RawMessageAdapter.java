@@ -12,7 +12,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializer;
 
 import ds.sudoku.communication.Message;
-import ds.sudoku.communication.RegisterMessage;
 
 /**
  * A json adapter for raw messages.

@@ -78,6 +78,15 @@ public class Message {
 	}
 	
 	/**
+	 * Check if the requested property exists.
+	 * @param property The property to be checked.
+	 * @return {@code ture}, if the property exists, {@code false} else.
+	 */
+	public boolean hasCustomProperty(String property) {
+		return customProperties.containsKey(property);
+	}
+	
+	/**
 	 * Checks if there is another custom value available.
 	 * If true, the next custom value can be accessed with 
 	 * {@link #getNextCustomValue}.
