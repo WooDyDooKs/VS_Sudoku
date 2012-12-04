@@ -84,30 +84,30 @@ public interface ClientMessageHandler {
     /**
      * Will be invoked when a message representing an error is received.
      * 
-     * @param message
-     *            The {@link ErrorMessage} generated from the incoming data.
      * @param client
      *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link ErrorMessage} generated from the incoming data.
      */
     public void onErrorMessageReceived(Client client, ErrorMessage message);
 
     /**
      * Will be invoked when a positive confirmation is received.
      * 
-     * @param message
-     *            The {@link ACKMessage} generated from the incoming data.
      * @param client
      *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link ACKMessage} generated from the incoming data.
      */
     public void onACKMessageReceived(Client client, ACKMessage message);
 
     /**
      * Will be invoked when a negative confirmation is received.
      * 
-     * @param message
-     *            The {@link NACKMessage} generated from the incoming data.
      * @param client
      *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link NACKMessage} generated from the incoming data.
      */
     public void onNACKMessageReceived(Client client, NACKMessage message);
 }
