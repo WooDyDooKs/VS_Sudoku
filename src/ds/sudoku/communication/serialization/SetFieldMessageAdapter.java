@@ -51,10 +51,6 @@ public class SetFieldMessageAdapter extends MessageSerializer implements
 		final int sudokuWidth = widthElement.getAsInt();
 		final int sudokuHeight = heightElement.getAsInt();
 		
-		//    Extract the sender
-		JsonElement senderElement = jsonMessageObject.get(SerializationKeys.SENDER_KEY);
-		final String sender = senderElement.getAsString();
-		
 		//    Extract zero based - ness
 		JsonElement zeroBasedElement = jsonMessageObject.get(SerializationKeys.ZERO_BASED_KEY);
 		final boolean zeroBased = zeroBasedElement.getAsBoolean();
@@ -64,8 +60,7 @@ public class SetFieldMessageAdapter extends MessageSerializer implements
 		final int value = valueElement.getAsInt();
 		
 		return new SetFieldMessage(
-		        index, value, 
-		        sender, zeroBased,
+		        index, value,zeroBased,
 		        sudokuWidth, sudokuHeight,
 		        customValues, customProperties
 		        );
@@ -89,7 +84,6 @@ public class SetFieldMessageAdapter extends MessageSerializer implements
 		jsonMessageObject.addProperty(SerializationKeys.INDEX_KEY, message.getIndex());
 		jsonMessageObject.addProperty(SerializationKeys.SUDOKU_WIDTH_KEY, message.getSudokuWidth());
 		jsonMessageObject.addProperty(SerializationKeys.SUDOKU_HEIGHT_KEY, message.getSudokuHeight());
-		jsonMessageObject.addProperty(SerializationKeys.SENDER_KEY, message.getSender());
 		jsonMessageObject.addProperty(SerializationKeys.ZERO_BASED_KEY, message.isZeroBased());
 		jsonMessageObject.addProperty(SerializationKeys.VALUE_KEY, message.getValue());
 		
