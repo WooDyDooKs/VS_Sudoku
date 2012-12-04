@@ -285,18 +285,26 @@ public class SudokuClient implements Client {
 
     @Override
     public void invite(String otherPlayer) {
+        //  Create the message
+        InviteMessage message = new InviteMessage(otherPlayer);
+        //  Add the message to the queue
+        synchronized(outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
     }
 
     @Override
     public void playerLeft(String otherPlayer) {        
     }
-
+    
     @Override
-    public void gameOver(boolean won) {        
-    }
-
-    @Override
-    public void gameOver(String winner) {        
+    public void gameOver(String winner) {
+        //  Create the message
+        GameOverMessage message = new GameOverMessage(winner);
+        //  Add the message to the queue
+        synchronized(outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
     }
 
     @Override
@@ -308,11 +316,6 @@ public class SudokuClient implements Client {
     }
 
     @Override
-    public void setMessageHandler(ClientMessageHandler handler) {
-        this.handler = handler;
-    }
-
-    @Override
     public void setField(int row, int column, int value) {
     }
 
@@ -321,4 +324,8 @@ public class SudokuClient implements Client {
         
     }
 
+    @Override
+    public void setMessageHandler(ClientMessageHandler handler) {
+        this.handler = handler;
+    }
 }
