@@ -37,14 +37,14 @@ public class SudokuClient implements Client {
     private final Gson json;
 
     // Threads for specific tasks
-    private final Thread receiver;
-    private final Thread sender;
+    private Thread receiver;
+    private Thread sender;
 
     // Internal data
     private ClientMessageHandler handler;
     private volatile boolean stop;
 
-    private final LinkedList<Message> outgoingMessageQueue;
+    private LinkedList<Message> outgoingMessageQueue;
 
     /**
      * Create a new sudoku client using the given socket and the given json
@@ -60,17 +60,8 @@ public class SudokuClient implements Client {
         this.json = json;
 
         this.handler = null;
-        this.outgoingMessageQueue = new LinkedList<Message>();
 
-        this.stop = false;
-
-        // Start the receivercore
-        this.receiver = new Thread(new ReceiverCore());
-        this.receiver.start();
-
-        // Start the sendercore
-        this.sender = new Thread(new SenderCore());
-        this.sender.start();
+        this.stop = true;
     }
 
     /**
@@ -476,5 +467,51 @@ public class SudokuClient implements Client {
     @Override
     public void setMessageHandler(ClientMessageHandler handler) {
         this.handler = handler;
+    }
+
+    /**
+     * {@inheritDoc Client#start()}
+     */
+    @Override
+    public void start() {
+        // If the threads already are running, do nothing.
+        if (receiver != null || sender != null)
+            return;
+        
+        this.outgoingMessageQueue = new LinkedList<Message>();
+        
+        this.stop = false;
+        
+        // Start the receivercore
+        this.receiver = new Thread(new ReceiverCore());
+        this.receiver.start();
+    
+        // Start the sendercore
+        this.sender = new Thread(new SenderCore());
+        this.sender.start(); 
+    }
+
+    /**
+     * {@inheritDoc Client#stop()}
+     */
+    @Override
+    public void stop() {
+        // If the client is already stopped, do nothing.
+        if (stop)
+            return;
+        
+        stop = true;
+        
+        try {
+            this.receiver.join();
+            this.sender.join();
+            socket.close();
+            receiver = null;
+            sender = null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
