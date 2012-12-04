@@ -48,16 +48,7 @@ public interface Client extends Connection, SudokuParticipant {
      *            Name of the player who left the game.
      */
     public void playerLeft(String otherPlayer);
-
-    /**
-     * Sends the client a game over message indicating that someone won the
-     * game.
-     * 
-     * @param won
-     *            Indicates wether the client has won the game or not.
-     */
-    public void gameOver(boolean won);
-
+    
     /**
      * Sends the client a game over message indicating that someone won the
      * game.
