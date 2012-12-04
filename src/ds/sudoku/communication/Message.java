@@ -23,7 +23,7 @@ import ds.sudoku.exceptions.communication.NoSuchPropertyException;
  * @author dalhai
  *
  */
-public abstract class Message {
+public class Message {
 	
 	private int currentCustomValue;
 	private List<String> customValues;

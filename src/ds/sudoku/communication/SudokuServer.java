@@ -34,11 +34,11 @@ import ds.sudoku.exceptions.SudokuError;
  */
 public class SudokuServer implements Server {
 
-    /**
-     * Constant timeout used in when reading from the connection.
-     */
-    public static final int TIMEOUT = 500;
-    
+	/**
+	 * Constant timeout used in when reading from the connection.
+	 */
+	public static final int TIMEOUT = 500;
+
 	// Data coming from outside
 	private final Socket socket;
 	private final Gson json;
@@ -69,12 +69,12 @@ public class SudokuServer implements Server {
 		this.handler = null;
 
 		this.stop = true;
-		
+
 		try {
-            socket.setSoTimeout(TIMEOUT);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
+			socket.setSoTimeout(TIMEOUT);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -101,10 +101,10 @@ public class SudokuServer implements Server {
 					// Get the next input line
 					String line = null;
 					try {
-					    line = input.readLine();
+						line = input.readLine();
 					} catch (SocketTimeoutException e) {
-					    // if we get a timeout, continue and try again.
-					    continue;
+						// if we get a timeout, continue and try again.
+						continue;
 					}
 					if (line == null) {
 						continue;
@@ -152,8 +152,15 @@ public class SudokuServer implements Server {
 						// to maintain
 						// compatibility with older java versions
 
+						// Raw Message
+						if (messageType.equals(Message.class.getName())) {
+							Message message = json.fromJson(parsedLine,
+									Message.class);
+							handler.onRawMessageReceived(SudokuServer.this,
+									message);
+						}
 						// Deregister
-						if (messageType.equals(DeregisterMessage.class
+						else if (messageType.equals(DeregisterMessage.class
 								.getName())) {
 							DeregisterMessage message = json.fromJson(
 									parsedLine, DeregisterMessage.class);
@@ -240,10 +247,10 @@ public class SudokuServer implements Server {
 					}
 				}
 			} catch (IOException e) {
-                e.printStackTrace();
-            }
+				e.printStackTrace();
+			}
 		}
-	} 
+	}
 
 	/**
 	 * The threaded sending core of this server.
@@ -266,14 +273,14 @@ public class SudokuServer implements Server {
 				final OutputStreamWriter osw = new OutputStreamWriter(
 						socket.getOutputStream());
 				final BufferedWriter output = new BufferedWriter(osw);
-				
+
 				while (true) {
 					// The next message to be sent
 					Message nextMessage = null;
 
-					//	Used to check if we still need to send messages
+					// Used to check if we still need to send messages
 					boolean canStop = false;
-					
+
 					// Aquire the lock
 					synchronized (outgoingMessageQueue) {
 						// Check if there is something on the queue.
@@ -283,9 +290,10 @@ public class SudokuServer implements Server {
 							canStop = true;
 						}
 					}
-					
+
 					// Check if we need to stop
-					if(stop && canStop) break;
+					if (stop && canStop)
+						break;
 
 					// no message? continue
 					if (nextMessage == null)
@@ -343,7 +351,7 @@ public class SudokuServer implements Server {
 		// Generate the message
 		SetFieldMessage message = new SetFieldMessage(index, value);
 		// Lock the queue and add the message
-		synchronized(outgoingMessageQueue) {
+		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
 		}
 	}
@@ -354,7 +362,8 @@ public class SudokuServer implements Server {
 	@Override
 	public void setField(int row, int column, int value, String sender) {
 		// Generate the message
-		NamedSetFieldMessage message = new NamedSetFieldMessage(sender, row, column, value);
+		NamedSetFieldMessage message = new NamedSetFieldMessage(sender, row,
+				column, value);
 		// Add the message to the message queue
 		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
@@ -367,7 +376,8 @@ public class SudokuServer implements Server {
 	@Override
 	public void setField(int index, int value, String sender) {
 		// Generate the message
-		NamedSetFieldMessage message = new NamedSetFieldMessage(sender, index, value);
+		NamedSetFieldMessage message = new NamedSetFieldMessage(sender, index,
+				value);
 		// Lock the queue and add the message
 		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
@@ -382,7 +392,7 @@ public class SudokuServer implements Server {
 		// Generate the message
 		RegisterMessage message = new RegisterMessage(name);
 		// Lock the queue and add the message
-		synchronized(outgoingMessageQueue) {
+		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
 		}
 	}
@@ -395,7 +405,7 @@ public class SudokuServer implements Server {
 		// Generate the message
 		RegisterMessage message = new RegisterMessage(name, token);
 		// Lock the queue and add the message
-		synchronized(outgoingMessageQueue) {
+		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
 		}
 	}
@@ -408,7 +418,7 @@ public class SudokuServer implements Server {
 		// Generate the message
 		DeregisterMessage message = new DeregisterMessage("", token);
 		// Lock the queue and add the message
-		synchronized(outgoingMessageQueue) {
+		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
 		}
 	}
@@ -421,7 +431,7 @@ public class SudokuServer implements Server {
 		// Generate the message
 		InviteMessage message = new InviteMessage(null, invited);
 		// Lock the queue and add the message
-		synchronized(outgoingMessageQueue) {
+		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
 		}
 	}
@@ -434,7 +444,7 @@ public class SudokuServer implements Server {
 		// Generate the message
 		InviteMessage message = new InviteMessage(null);
 		// Lock the queue and add the message
-		synchronized(outgoingMessageQueue) {
+		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
 		}
 	}
@@ -473,7 +483,7 @@ public class SudokuServer implements Server {
 		// Generate the message
 		ACKMessage message = new ACKMessage(confirmedMessage);
 		// Lock the queue and add the message
-		synchronized(outgoingMessageQueue) {
+		synchronized (outgoingMessageQueue) {
 			outgoingMessageQueue.addLast(message);
 		}
 	}
@@ -483,7 +493,7 @@ public class SudokuServer implements Server {
 	 */
 	@Override
 	public void NACK(Message confirmedMessage) {
-		//Generate the message
+		// Generate the message
 		NACKMessage message = new NACKMessage(confirmedMessage);
 		// Lock the queue and add the message
 		synchronized (outgoingMessageQueue) {
@@ -504,8 +514,9 @@ public class SudokuServer implements Server {
 	 */
 	@Override
 	public void start() {
-		if(sender != null || receiver != null) return;
-		
+		if (sender != null || receiver != null)
+			return;
+
 		this.outgoingMessageQueue = new LinkedList<Message>();
 
 		this.stop = false;
@@ -524,18 +535,19 @@ public class SudokuServer implements Server {
 	 */
 	@Override
 	public void stop() {
-		if(stop) return;
-		
+		if (stop)
+			return;
+
 		stop = true;
 		try {
 			sender.join();
 			socket.close();
-			
+
 			sender = null;
 			receiver = null;
 		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
 }

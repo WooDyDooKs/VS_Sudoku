@@ -17,6 +17,7 @@ import ds.sudoku.communication.serialization.LeftMessageAdapter;
 import ds.sudoku.communication.serialization.NACKMessageAdapter;
 import ds.sudoku.communication.serialization.NamedSetFieldMessageAdapter;
 import ds.sudoku.communication.serialization.NewGameMessageAdapter;
+import ds.sudoku.communication.serialization.RawMessageAdapter;
 import ds.sudoku.communication.serialization.RegisterMessageAdapter;
 import ds.sudoku.communication.serialization.ScoreMessageAdapter;
 import ds.sudoku.communication.serialization.SetFieldMessageAdapter;
@@ -78,6 +79,7 @@ public class ClientListener implements ConnectionManager {
                 new NewGameMessageAdapter());
         gsonBuilder.registerTypeAdapter(LeaveMessage.class,
                 new LeaveMessageAdapter());
+        gsonBuilder.registerTypeAdapter(Message.class, new RawMessageAdapter());
 
         json = gsonBuilder.create();
         
