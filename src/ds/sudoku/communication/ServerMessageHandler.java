@@ -131,7 +131,7 @@ public interface ServerMessageHandler {
      * @param message
      *            The {@link NewGameMessage} generated from the incoming data.
      * @param client
-     *            The {@link Client} who sent the message.
+     *            The {@link Server} who sent the message.
      */
-    public void onNewGameMessageReceived(Client client, NewGameMessage message);
+    public void onNewGameMessageReceived(Server client, NewGameMessage message);
 }
