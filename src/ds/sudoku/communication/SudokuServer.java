@@ -293,35 +293,67 @@ public class SudokuServer implements Server {
 
 	}
 
+	/**
+	 * {@inheritDoc Server#sendMessage(Message)}
+	 */
 	@Override
 	public void sendMessage(Message message) {
-		// TODO Auto-generated method stub
-
+		// Directly lock the queue and add the message
+		synchronized (outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#setField(int, int, int)}
+	 */
 	@Override
 	public void setField(int row, int column, int value) {
-		;
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		SetFieldMessage message = new SetFieldMessage(row, column, value);
+		// Lock the queue and add the message
+		synchronized (outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#setField(int, int)}
+	 */
 	@Override
 	public void setField(int index, int value) {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		SetFieldMessage message = new SetFieldMessage(index, value);
+		// Lock the queue and add the message
+		synchronized(outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#setField(int, int, int, String)}
+	 */
 	@Override
 	public void setField(int row, int column, int value, String sender) {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		NamedSetFieldMessage message = new NamedSetFieldMessage(sender, row, column, value);
+		// Add the message to the message queue
+		synchronized (outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#setField(int, int, String)}
+	 */
 	@Override
 	public void setField(int index, int value, String sender) {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		NamedSetFieldMessage message = new NamedSetFieldMessage(sender, index, value);
+		// Lock the queue and add the message
+		synchronized (outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
 	@Override
