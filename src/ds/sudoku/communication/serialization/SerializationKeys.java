@@ -97,4 +97,10 @@ public final class SerializationKeys {
      * the receiver of a message.
      */
 	public static final String RECEIVER_KEY = null;
+
+	/**
+	 * This String will be used as the key for a property describing
+	 * the sudoku field sent with a message. 
+	 */
+	public static final String SUDOKU_FIELD = null;
 }
