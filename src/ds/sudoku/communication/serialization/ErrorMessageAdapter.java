@@ -12,13 +12,14 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import ds.sudoku.communication.ScoreMessage;
+import ds.sudoku.communication.ErrorMessage;
+import ds.sudoku.exceptions.SudokuError;
 
-public class ScoreMessageAdapter extends MessageSerializer implements
-        JsonSerializer<ScoreMessage>, JsonDeserializer<ScoreMessage> {
+public class ErrorMessageAdapter extends MessageSerializer implements
+        JsonSerializer<ErrorMessage>, JsonDeserializer<ErrorMessage> {
 
     /**
-     * Deserialize the given {@link JsonElement} to a {@link ScoreMessage}.
+     * Deserialize the given {@link JsonElement} to a {@link ErrorMessage}.
      * 
      * @param jsonMessage
      *            The input for de-serialization.
@@ -26,13 +27,13 @@ public class ScoreMessageAdapter extends MessageSerializer implements
      *            The type used for de-serialization.
      * @param context
      *            The context of the de-serialization.
-     * @return A new ScoreMessage built from the input.
+     * @return A new ErrorMessage built from the input.
      * @throws JsonParseException
      *             Thrown, if the given input does not provide the structure
-     *             needed by a {@link ScoreMessage}
+     *             needed by a {@link ErrorMessage}
      */
     @Override
-    public ScoreMessage deserialize(JsonElement jsonMessage, Type type,
+    public ErrorMessage deserialize(JsonElement jsonMessage, Type type,
             JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonMessageObject = jsonMessage.getAsJsonObject();
 
@@ -40,16 +41,22 @@ public class ScoreMessageAdapter extends MessageSerializer implements
         List<String> customValues = extractCustomValues(jsonMessageObject);
         Map<String, String> customProperties = extractCustomProperties(jsonMessageObject);
 
-        // Extract boolean winning
-        JsonElement winningElement = jsonMessageObject
-                .get(SerializationKeys.IS_WINNING_KEY);
-        final boolean winning = winningElement.getAsBoolean();
+        // Extract error type
+        JsonElement errorElement = jsonMessageObject
+                .get(SerializationKeys.ERROR_KEY);
+        final String errorString = errorElement.getAsString();
+        final SudokuError error = SudokuError.valueOf(errorString);
 
-        return new ScoreMessage(winning, customValues, customProperties);
+        // Extract error messager
+        JsonElement messageElement = jsonMessageObject
+                .get(SerializationKeys.REASON_KEY);
+        final String message = messageElement.getAsString();
+
+        return new ErrorMessage(error, message, customValues, customProperties);
     }
 
     /**
-     * Serialize the given {@link ScoreMessage} into a {@link JsonElement}.
+     * Serialize the given {@link ErrorMessage} into a {@link JsonElement}.
      * 
      * @param message
      *            The message to be serialized.
@@ -60,15 +67,19 @@ public class ScoreMessageAdapter extends MessageSerializer implements
      * @return A new JsonElement representing the message.
      */
     @Override
-    public JsonElement serialize(ScoreMessage message, Type type,
+    public JsonElement serialize(ErrorMessage message, Type type,
             JsonSerializationContext context) {
         JsonElement jsonMessageElement = super
                 .serialize(message, type, context);
         JsonObject jsonMessageObject = jsonMessageElement.getAsJsonObject();
 
-        // Add the boolean winning.
-        jsonMessageObject.addProperty(SerializationKeys.IS_WINNING_KEY,
-                message.isWinning());
+        // Add the error type.
+        final String errorString = message.getError().toString();
+        jsonMessageObject.addProperty(SerializationKeys.ERROR_KEY, errorString);
+
+        // Add the error message.
+        jsonMessageObject.addProperty(SerializationKeys.REASON_KEY,
+                message.getMessage());
 
         return jsonMessageObject;
     }
