@@ -52,7 +52,7 @@ public class NACKMessage extends TokenizedMessage {
      * @param customValues The custom values stored in this message.
      * @param customProperties The custom properties stored in this message.
      */
-    public NACKMessage(final Message confirmedMessage, Serializable token,
+    public NACKMessage(final Message confirmedMessage, String token,
             List<String> customValues, Map<String, String> customProperties) {
         super(token, customValues, customProperties);
         this.confirmedMessage = confirmedMessage;

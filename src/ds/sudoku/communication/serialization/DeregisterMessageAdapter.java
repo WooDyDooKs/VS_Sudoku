@@ -67,7 +67,7 @@ implements JsonSerializer<DeregisterMessage>, JsonDeserializer<DeregisterMessage
 		JsonElement jsonMessageElement = super.serialize(message, type, context);
 		JsonObject jsonMessageObject = jsonMessageElement.getAsJsonObject();
 		
-		//	jsonMessageObject already hast the custom properties, values and
+		//	jsonMessageObject already has the custom properties, values and
 		//	the message type stored. We just need to add new properties for our
 		//	fields.
 		jsonMessageObject.addProperty(SerializationKeys.REASON_KEY, message.getReason());
