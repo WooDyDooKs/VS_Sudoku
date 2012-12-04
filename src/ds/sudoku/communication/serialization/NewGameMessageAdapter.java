@@ -14,7 +14,6 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import ds.sudoku.communication.InviteMessage;
 import ds.sudoku.communication.NewGameMessage;
 import ds.sudoku.logic.SudokuTemplate;
 
