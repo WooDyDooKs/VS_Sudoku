@@ -248,18 +248,26 @@ public class SudokuServer implements Server {
 				final OutputStreamWriter osw = new OutputStreamWriter(
 						socket.getOutputStream());
 				final BufferedWriter output = new BufferedWriter(osw);
-
+				
 				while (!stop) {
 					// The next message to be sent
 					Message nextMessage = null;
 
+					//	Used to check if we still need to send messages
+					boolean canStop = false;
+					
 					// Aquire the lock
 					synchronized (outgoingMessageQueue) {
 						// Check if there is something on the queue.
 						if (!outgoingMessageQueue.isEmpty()) {
 							nextMessage = outgoingMessageQueue.pop();
+						} else {
+							canStop = true;
 						}
 					}
+					
+					// Check if we need to stop
+					if(stop && canStop) break;
 
 					// no message? continue
 					if (nextMessage == null)
