@@ -1,5 +1,7 @@
 package ds.sudoku.communication;
 
+import ds.sudoku.exceptions.SudokuError;
+
 /**
  * This interface specifies a connection in a client - server application.
  * 
@@ -15,10 +17,12 @@ public interface Connection {
      * Sends an error with the given message over the connection. The equivalent
      * in natural language would be "Something is wrong.".
      * 
+     * @param error
+     *            The error to be sent.
      * @param message
      *            the message sent alongisde with the error.
      */
-    public void sendError(String message);
+    public void sendError(SudokuError error, String message);
 
     /**
      * Sends an arbitrary message over the connection.

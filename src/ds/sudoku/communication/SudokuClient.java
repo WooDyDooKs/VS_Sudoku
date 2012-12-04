@@ -15,6 +15,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 import ds.sudoku.communication.serialization.SerializationKeys;
+import ds.sudoku.exceptions.SudokuError;
 import ds.sudoku.logic.SudokuTemplate;
 
 /**
@@ -245,13 +246,21 @@ public class SudokuClient implements Client {
     }
 
     @Override
-    public void sendError(String message) {
-        
+    public void sendError(SudokuError error, String textMessage) {
+        // Create the message
+        ErrorMessage message = new ErrorMessage(error, textMessage);
+        //  Add the message to the queue
+        synchronized (outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
     }
 
     @Override
     public void sendMessage(Message message) {
-        
+        // Just add the message to the queue
+        synchronized (outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
     }
 
     @Override
@@ -294,7 +303,13 @@ public class SudokuClient implements Client {
     }
 
     @Override
-    public void playerLeft(String otherPlayer) {        
+    public void playerLeft(String otherPlayer) {
+        // Create the message
+        LeftMessage message = new LeftMessage(otherPlayer);
+        //  Add the message to the queue
+        synchronized(outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
     }
     
     @Override
