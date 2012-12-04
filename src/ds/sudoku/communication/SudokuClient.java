@@ -519,13 +519,10 @@ public class SudokuClient implements Client {
         stop = true;
 
         try {
-            this.receiver.join();
-            this.sender.join();
             socket.close();
+            
             receiver = null;
             sender = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
