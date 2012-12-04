@@ -34,6 +34,11 @@ import ds.sudoku.logic.SudokuTemplate;
  */
 public class SudokuClient implements Client {
 
+    /**
+     * Constant timeout used in when reading from the connection.
+     */
+    public static final int TIMEOUT = 500;
+    
     // Data coming from outside
     private final Socket socket;
     private final Gson json;
@@ -64,6 +69,12 @@ public class SudokuClient implements Client {
         this.handler = null;
 
         this.stop = true;
+        
+        try {
+            socket.setSoTimeout(TIMEOUT);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -95,6 +106,7 @@ public class SudokuClient implements Client {
                     try {
                         line = input.readLine();
                     } catch (SocketTimeoutException e) {
+                        // If we get a timeout, continue and try again.
                         continue;
                     }
                     if (line == null) {
@@ -222,8 +234,6 @@ public class SudokuClient implements Client {
                 if (isr != null)
                     isr.close();
 
-            } catch (SocketException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -524,10 +534,8 @@ public class SudokuClient implements Client {
             
             receiver = null;
             sender = null;
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-            e.printStackTrace();
-        } 
+		} 
     }
 }

@@ -15,15 +15,6 @@ public interface ConnectionManager {
     public void acceptConnections();
 
     /**
-     * Start waiting and forwarding connections to the handler. Accept at most
-     * {@code maximumConnections}.
-     * 
-     * @param maximumConnections
-     *            The maximum number of connections accepted at the same time.
-     */
-    public void acceptConnections(int maximumConnections);
-
-    /**
      * Stop listening for connections.
      */
     public void rejectConnections();

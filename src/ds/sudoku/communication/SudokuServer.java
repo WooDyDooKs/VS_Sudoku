@@ -34,6 +34,11 @@ import ds.sudoku.exceptions.SudokuError;
  */
 public class SudokuServer implements Server {
 
+    /**
+     * Constant timeout used in when reading from the connection.
+     */
+    public static final int TIMEOUT = 500;
+    
 	// Data coming from outside
 	private final Socket socket;
 	private final Gson json;
@@ -62,9 +67,14 @@ public class SudokuServer implements Server {
 		this.json = json;
 
 		this.handler = null;
-		this.outgoingMessageQueue = new LinkedList<Message>();
 
 		this.stop = true;
+		
+		try {
+            socket.setSoTimeout(TIMEOUT);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
 	}
 
 	/**
@@ -93,6 +103,7 @@ public class SudokuServer implements Server {
 					try {
 					    line = input.readLine();
 					} catch (SocketTimeoutException e) {
+					    // if we get a timeout, continue and try again.
 					    continue;
 					}
 					if (line == null) {
@@ -228,13 +239,11 @@ public class SudokuServer implements Server {
 						}
 					}
 				}
-			} catch (SocketException e) {
+			} catch (IOException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
-				e.printStackTrace();
-			}
+            }
 		}
-	}
+	} 
 
 	/**
 	 * The threaded sending core of this server.
@@ -524,11 +533,9 @@ public class SudokuServer implements Server {
 			
 			sender = null;
 			receiver = null;
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		} 
 	}
 
 }
