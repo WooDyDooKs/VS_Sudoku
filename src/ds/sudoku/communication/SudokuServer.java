@@ -356,64 +356,129 @@ public class SudokuServer implements Server {
 		}
 	}
 
+	/**
+	 * {@inheritDoc Server#register(String)}
+	 */
 	@Override
 	public void register(String name) {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		RegisterMessage message = new RegisterMessage(name);
+		// Lock the queue and add the message
+		synchronized(outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#register(String, Serializable)}
+	 */
 	@Override
 	public void register(String name, Serializable token) {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		RegisterMessage message = new RegisterMessage(name, token);
+		// Lock the queue and add the message
+		synchronized(outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#deregister(Serializable)}
+	 */
 	@Override
 	public void deregister(Serializable token) {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		DeregisterMessage message = new DeregisterMessage("", token);
+		// Lock the queue and add the message
+		synchronized(outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#invite(String)}
+	 */
 	@Override
-	public void invite(String name) {
-		// TODO Auto-generated method stub
-
+	public void invite(String invited) {
+		// Generate the message
+		InviteMessage message = new InviteMessage(null, invited);
+		// Lock the queue and add the message
+		synchronized(outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#requestRandomMatch()}
+	 */
 	@Override
 	public void requestRandomMatch() {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		InviteMessage message = new InviteMessage(null);
+		// Lock the queue and add the message
+		synchronized(outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#leave()}
+	 */
 	@Override
 	public void leave() {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		LeaveMessage message = new LeaveMessage();
+		// Lock the queue and add the message
+		synchronized (outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#sendError(SudokuError, String)}
+	 */
 	@Override
-	public void sendError(SudokuError error, String message) {
-		// TODO Auto-generated method stub
-
+	public void sendError(SudokuError error, String emessage) {
+		// Generate the message
+		ErrorMessage message = new ErrorMessage(error, emessage);
+		// Lock the queue and add the message
+		synchronized (outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#ACK(Message)}
+	 */
 	@Override
 	public void ACK(Message confirmedMessage) {
-		// TODO Auto-generated method stub
-
+		// Generate the message
+		ACKMessage message = new ACKMessage(confirmedMessage);
+		// Lock the queue and add the message
+		synchronized(outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#NACK(Message)}
+	 */
 	@Override
 	public void NACK(Message confirmedMessage) {
-		// TODO Auto-generated method stub
-
+		//Generate the message
+		NACKMessage message = new NACKMessage(confirmedMessage);
+		// Lock the queue and add the message
+		synchronized (outgoingMessageQueue) {
+			outgoingMessageQueue.addLast(message);
+		}
 	}
 
+	/**
+	 * {@inheritDoc Server#setMessageHandler(ServerMessageHandler)}
+	 */
 	@Override
 	public void setMessageHandler(ServerMessageHandler handler) {
-		// TODO Auto-generated method stub
-
+		this.handler = handler;
 	}
 
 }
