@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 
 import com.google.gson.Gson;
@@ -87,7 +89,12 @@ public class SudokuServer implements Server {
 
 				while (!stop) {
 					// Get the next input line
-					final String line = input.readLine();
+					String line = null;
+					try {
+					    line = input.readLine();
+					} catch (SocketTimeoutException e) {
+					    continue;
+					}
 					if (line == null) {
 						continue;
 					}
@@ -221,7 +228,9 @@ public class SudokuServer implements Server {
 						}
 					}
 				}
-			} catch (IOException e) {
+			} catch (SocketException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -249,7 +258,7 @@ public class SudokuServer implements Server {
 						socket.getOutputStream());
 				final BufferedWriter output = new BufferedWriter(osw);
 				
-				while (!stop) {
+				while (true) {
 					// The next message to be sent
 					Message nextMessage = null;
 

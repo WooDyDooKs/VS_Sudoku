@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 
 import com.google.gson.Gson;
@@ -89,7 +91,12 @@ public class SudokuClient implements Client {
 
                 while (!stop) {
                     // Get the next input line
-                    final String line = input.readLine();
+                    String line = null;
+                    try {
+                        line = input.readLine();
+                    } catch (SocketTimeoutException e) {
+                        continue;
+                    }
                     if (line == null) {
                         continue;
                     }
@@ -215,6 +222,8 @@ public class SudokuClient implements Client {
                 if (isr != null)
                     isr.close();
 
+            } catch (SocketException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -244,7 +253,7 @@ public class SudokuClient implements Client {
                         socket.getOutputStream());
                 final BufferedWriter output = new BufferedWriter(osw);
 
-                while (!stop) {
+                while (true) {
                     // The next message to be sent.
                     Message nextMessage = null;
 
@@ -258,9 +267,10 @@ public class SudokuClient implements Client {
                             canStop = true;
                         }
                     }
-                    
+
                     // Check if we need to stop
-                    if(stop && canStop) break;
+                    if (stop && canStop)
+                        break;
 
                     // No message? Continue
                     if (nextMessage == null)
@@ -483,18 +493,18 @@ public class SudokuClient implements Client {
         // If the threads already are running, do nothing.
         if (receiver != null || sender != null)
             return;
-        
+
         this.outgoingMessageQueue = new LinkedList<Message>();
-        
+
         this.stop = false;
-        
+
         // Start the receivercore
         this.receiver = new Thread(new ReceiverCore());
         this.receiver.start();
-    
+
         // Start the sendercore
         this.sender = new Thread(new SenderCore());
-        this.sender.start(); 
+        this.sender.start();
     }
 
     /**
@@ -505,9 +515,9 @@ public class SudokuClient implements Client {
         // If the client is already stopped, do nothing.
         if (stop)
             return;
-        
+
         stop = true;
-        
+
         try {
             this.receiver.join();
             this.sender.join();
