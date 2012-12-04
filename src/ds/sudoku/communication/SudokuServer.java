@@ -1,8 +1,10 @@
 package ds.sudoku.communication;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.LinkedList;
 
@@ -14,6 +16,7 @@ import com.google.gson.JsonParser;
 
 import ds.sudoku.communication.serialization.Serializable;
 import ds.sudoku.communication.serialization.SerializationKeys;
+import ds.sudoku.exceptions.SudokuError;
 
 /**
  * Implementation of the Server interface.
@@ -66,14 +69,15 @@ public class SudokuServer implements Server {
 		this.receiver.start();
 
 		// Start the sendercore
-		this.sender = null;
+		this.sender = new Thread(new SenderCore());
+		this.sender.start();
 	}
 
 	/**
 	 * The threaded receiving core of this server.
 	 * 
 	 * <p>
-	 * This client constantly listens for incoming messages and dispatches them
+	 * This server constantly listens for incoming messages and dispatches them
 	 * into the registered handler.
 	 * </p>
 	 */
@@ -137,24 +141,93 @@ public class SudokuServer implements Server {
 						// Dispatch the right message type. switch(...) not used
 						// to maintain
 						// compatibility with older java versions
-						
+
 						// Deregister
-						if(messageType.equals(DeregisterMessage.class.getName())) {
-							DeregisterMessage message = json.fromJson(parsedLine, DeregisterMessage.class);
-							handler.onDeregisterMessageReceived(SudokuServer.this, message);
+						if (messageType.equals(DeregisterMessage.class
+								.getName())) {
+							DeregisterMessage message = json.fromJson(
+									parsedLine, DeregisterMessage.class);
+							handler.onDeregisterMessageReceived(
+									SudokuServer.this, message);
 						}
 						// Left
-						else if(messageType.equals(LeftMessage.class.getName())) {
-							LeftMessage message = json.fromJson(parsedLine, LeftMessage.class);
-							handler.onLeftMessageReceived(SudokuServer.this, message);
+						else if (messageType
+								.equals(LeftMessage.class.getName())) {
+							LeftMessage message = json.fromJson(parsedLine,
+									LeftMessage.class);
+							handler.onLeftMessageReceived(SudokuServer.this,
+									message);
 						}
 						// SetField
-						else if(messageType.equals(SetFieldMessage.class.getName())) {
-							SetFieldMessage message = json.fromJson(parsedLine, SetFieldMessage.class);
-							handler.onSetFieldMessageReceived(SudokuServer.this, message);
+						else if (messageType.equals(SetFieldMessage.class
+								.getName())) {
+							SetFieldMessage message = json.fromJson(parsedLine,
+									SetFieldMessage.class);
+							handler.onSetFieldMessageReceived(
+									SudokuServer.this, message);
+						}
+						// ACK
+						else if (messageType.equals(ACKMessage.class.getName())) {
+							ACKMessage message = json.fromJson(parsedLine,
+									ACKMessage.class);
+							handler.onACKReceived(SudokuServer.this, message);
+						}
+						// NACK
+						else if (messageType
+								.equals(NACKMessage.class.getName())) {
+							NACKMessage message = json.fromJson(parsedLine,
+									NACKMessage.class);
+							handler.onNACKReceived(SudokuServer.this, message);
+						}
+						// Error
+						else if (messageType.equals(ErrorMessage.class
+								.getName())) {
+							ErrorMessage message = json.fromJson(parsedLine,
+									ErrorMessage.class);
+							handler.onErrorMesssageReceived(SudokuServer.this,
+									message);
+						}
+						// GameOver
+						else if (messageType.equals(GameOverMessage.class
+								.getName())) {
+							GameOverMessage message = json.fromJson(parsedLine,
+									GameOverMessage.class);
+							handler.onGameOverMessageReceived(
+									SudokuServer.this, message);
+						}
+						// Invite
+						else if (messageType.equals(InviteMessage.class
+								.getName())) {
+							InviteMessage message = json.fromJson(parsedLine,
+									InviteMessage.class);
+							handler.onInviteMessageReceived(SudokuServer.this,
+									message);
+						}
+						// NamedSetField
+						else if (messageType.equals(NamedSetFieldMessage.class
+								.getName())) {
+							NamedSetFieldMessage message = json.fromJson(
+									parsedLine, NamedSetFieldMessage.class);
+							handler.onNamedSetFieldMessageReceived(
+									SudokuServer.this, message);
+						}
+						// NewGame
+						else if (messageType.equals(NewGameMessage.class
+								.getName())) {
+							NewGameMessage message = json.fromJson(parsedLine,
+									NewGameMessage.class);
+							handler.onNewGameMessageReceived(SudokuServer.this,
+									message);
+						}
+						// Score
+						else if (messageType.equals(ScoreMessage.class
+								.getName())) {
+							ScoreMessage message = json.fromJson(parsedLine,
+									ScoreMessage.class);
+							handler.onScoreMessageReceived(SudokuServer.this,
+									message);
 						}
 					}
-
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -162,9 +235,61 @@ public class SudokuServer implements Server {
 		}
 	}
 
-	@Override
-	public void sendError(String message) {
-		// TODO Auto-generated method stub
+	/**
+	 * The threaded sending core of this server.
+	 * 
+	 * <p>
+	 * This server looks at the outgoing message queue in a loop. Whenever thee
+	 * is a message to be sent, the message is converted to JSON and then sent
+	 * over the connection. The core then starts looking at the message queue
+	 * again.
+	 * 
+	 * @author dalhai
+	 * 
+	 */
+	private class SenderCore implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				// Streams for easy sending
+				final OutputStreamWriter osw = new OutputStreamWriter(
+						socket.getOutputStream());
+				final BufferedWriter output = new BufferedWriter(osw);
+
+				while (!stop) {
+					// The next message to be sent
+					Message nextMessage = null;
+
+					// Aquire the lock
+					synchronized (outgoingMessageQueue) {
+						// Check if there is something on the queue.
+						if (!outgoingMessageQueue.isEmpty()) {
+							nextMessage = outgoingMessageQueue.pop();
+						}
+					}
+
+					// no message? continue
+					if (nextMessage == null)
+						continue;
+
+					// Lock is released, send the message
+					final String jsonMessage = json.toJson(nextMessage);
+					output.write(jsonMessage);
+					output.newLine();
+					output.flush();
+				}
+
+				// Free resources
+				if (output != null)
+					output.close();
+				if (osw != null)
+					osw.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 
@@ -175,19 +300,8 @@ public class SudokuServer implements Server {
 	}
 
 	@Override
-	public void ACK() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void NACK() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setField(int row, int column, int value) {;
+	public void setField(int row, int column, int value) {
+		;
 		// TODO Auto-generated method stub
 
 	}
@@ -242,6 +356,24 @@ public class SudokuServer implements Server {
 
 	@Override
 	public void leave() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendError(SudokuError error, String message) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void ACK(Message confirmedMessage) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void NACK(Message confirmedMessage) {
 		// TODO Auto-generated method stub
 
 	}
