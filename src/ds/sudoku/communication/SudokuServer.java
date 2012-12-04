@@ -519,10 +519,13 @@ public class SudokuServer implements Server {
 		
 		stop = true;
 		try {
+			sender.join();
 			socket.close();
 			
 			sender = null;
 			receiver = null;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
