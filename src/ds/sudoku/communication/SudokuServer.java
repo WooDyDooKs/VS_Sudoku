@@ -37,14 +37,14 @@ public class SudokuServer implements Server {
 	private final Gson json;
 
 	// Threads for specific tasks
-	private final Thread receiver;
-	private final Thread sender;
+	private Thread receiver;
+	private Thread sender;
 
 	// Internal data
 	private ServerMessageHandler handler;
 	private volatile boolean stop;
 
-	private final LinkedList<Message> outgoingMessageQueue;
+	private LinkedList<Message> outgoingMessageQueue;
 
 	/**
 	 * Create a new sudoku server using the given socket and the given json
@@ -62,15 +62,7 @@ public class SudokuServer implements Server {
 		this.handler = null;
 		this.outgoingMessageQueue = new LinkedList<Message>();
 
-		this.stop = false;
-
-		// Start the receiver core
-		this.receiver = new Thread(new ReceiverCore());
-		this.receiver.start();
-
-		// Start the sendercore
-		this.sender = new Thread(new SenderCore());
-		this.sender.start();
+		this.stop = true;
 	}
 
 	/**
@@ -479,6 +471,48 @@ public class SudokuServer implements Server {
 	@Override
 	public void setMessageHandler(ServerMessageHandler handler) {
 		this.handler = handler;
+	}
+
+	/**
+	 * {@inheritDoc Server#start()}
+	 */
+	@Override
+	public void start() {
+		if(sender != null || receiver != null) return;
+		
+		this.outgoingMessageQueue = new LinkedList<Message>();
+
+		this.stop = false;
+
+		// Start the receiver core
+		this.receiver = new Thread(new ReceiverCore());
+		this.receiver.start();
+
+		// Start the sendercore
+		this.sender = new Thread(new SenderCore());
+		this.sender.start();
+	}
+
+	/**
+	 * {@inheritDoc Server#stop()}
+	 */
+	@Override
+	public void stop() {
+		if(stop) return;
+		
+		stop = true;
+		try {
+			sender.join();
+			receiver.join();
+			socket.close();
+			
+			sender = null;
+			receiver = null;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
