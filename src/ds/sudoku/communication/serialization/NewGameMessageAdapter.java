@@ -35,7 +35,7 @@ public class NewGameMessageAdapter extends MessageSerializer implements
 	 *            The type used for de-serialization.
 	 * @param context
 	 *            The context of the de-serialization.
-	 * @return A new invite message built from the input.
+	 * @return A new game message built from the input.
 	 * @throws JsonParseException
 	 *             Thrown, if the given input does not provide the structure
 	 *             needed by a {@link NewGameMessage}.
