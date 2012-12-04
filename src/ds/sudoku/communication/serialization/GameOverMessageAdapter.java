@@ -14,6 +14,11 @@ import com.google.gson.JsonSerializer;
 
 import ds.sudoku.communication.GameOverMessage;
 
+/**
+ * Message adapter used for serialization of {@link GameOverMessage}.
+ * @author WooDyDooKs
+ *
+ */
 public class GameOverMessageAdapter extends MessageSerializer implements
         JsonSerializer<GameOverMessage>, JsonDeserializer<GameOverMessage> {
 
@@ -35,34 +40,41 @@ public class GameOverMessageAdapter extends MessageSerializer implements
     public GameOverMessage deserialize(JsonElement jsonMessage, Type type,
             JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonMessageObject = jsonMessage.getAsJsonObject();
-        
+
         // First extract the message parts
         List<String> customValues = extractCustomValues(jsonMessageObject);
         Map<String, String> customProperties = extractCustomProperties(jsonMessageObject);
-        
+
         // Extract string name
-        JsonElement nameElement = jsonMessageObject.get(SerializationKeys.NAME_KEY);
+        JsonElement nameElement = jsonMessageObject
+                .get(SerializationKeys.NAME_KEY);
         final String name = nameElement.getAsString();
-        
+
         return new GameOverMessage(name, customValues, customProperties);
     }
 
     /**
      * Serialize the given {@link GameOverMessage} into a {@link JsonElement}.
-     * @param message The message to be serialized.
-     * @param type The type used for serialization.
-     * @param context The context of the serialization.
+     * 
+     * @param message
+     *            The message to be serialized.
+     * @param type
+     *            The type used for serialization.
+     * @param context
+     *            The context of the serialization.
      * @return A new JsonElement representing the message.
      */
     @Override
     public JsonElement serialize(GameOverMessage message, Type type,
             JsonSerializationContext context) {
-        JsonElement jsonMessageElement = super.serialize(message, type, context);
+        JsonElement jsonMessageElement = super
+                .serialize(message, type, context);
         JsonObject jsonMessageObject = jsonMessageElement.getAsJsonObject();
-        
+
         // Add the string name
-        jsonMessageObject.addProperty(SerializationKeys.NAME_KEY, message.getName());
+        jsonMessageObject.addProperty(SerializationKeys.NAME_KEY,
+                message.getName());
         return jsonMessageObject;
     }
-    
+
 }

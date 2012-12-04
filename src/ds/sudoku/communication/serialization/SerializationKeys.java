@@ -108,4 +108,10 @@ public final class SerializationKeys {
      * field sent with a message.
      */
     public static final String SUDOKU_FIELD = "Field";
+
+    /**
+     * This String will be used as the key for a property describing the
+     * confirmed message.
+     */
+    public static final String CONFIRMED_MESSAGE_KEY = "Confirmed";
 }
