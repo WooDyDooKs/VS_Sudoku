@@ -48,7 +48,7 @@ public class ScoreMessage extends Message {
     /**
      * Check if the client is winning.
      * 
-     * @return Returns {@code true} if the client is winning, else {@code false}
+     * @return {@code true} if the client is winning, else {@code false}
      */
     public boolean isWinning() {
         return winning;
