@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="ds/sudoku/gui/|ds/sudoku/logic/CellInfo.java|ds/sudoku/logic/SudokuChangedEvent.java|ds/sudoku/logic/SudokuChangeListener.java|ds/sudoku/logic/SudokuChangePublisher.java|ds/sudoku/logic/SudokuInfo.java|ds/sudoku/server/|ds/sudoku/exceptions/server/|ds/sudoku/logic/Cell.java|ds/sudoku/logic/SampleSudokuFactory.java|ds/sudoku/logic/ServerSetFieldInfo.java|ds/sudoku/logic/SudokuGrid.java|ds/sudoku/logic/SudokuHandler.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="../../libs/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="../../libs/mongo-2.9.3.jar"/>

@@ -49,4 +49,15 @@ public interface Connection {
      *            The message that is to be confirmed.
      */
     public void NACK(Message confirmedMessage);
+    
+    /**
+     * Start the connection and listen for incomming messages.
+     * Also start sending queued messages.
+     */
+    public void start();
+    
+    /**
+     * Stop the connection. <b>CLOSES THE SOCKET!</b>
+     */
+    public void stop();
 }
