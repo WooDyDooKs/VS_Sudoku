@@ -86,5 +86,15 @@ public final class SerializationKeys {
      */
     public static final String SENDER_KEY = "Sender";
 
+    /**
+     * This string will be used as the key for a property describing
+     * if the receiver is winning.
+     */
     public static final String IS_WINNING_KEY = "Winning";
+
+    /**
+     * This String will be used as the key for a property describing
+     * the receiver of a message.
+     */
+	public static final String RECEIVER_KEY = null;
 }
