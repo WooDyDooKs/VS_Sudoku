@@ -35,12 +35,18 @@ public interface Connection {
     /**
      * Sends a positive confirmation over the connection. The equivalent in
      * natural language would be "Everything went well".
+     * 
+     * @param confirmedMessage
+     *            The message that is to be confirmed.
      */
-    public void ACK();
+    public void ACK(Message confirmedMessage);
 
     /**
      * Sends a negative confirmation over the connection. The equivalent in
      * natural language would be "Something with what you're saying is wrong".
+     * 
+     * @param confirmedMessage
+     *            The message that is to be confirmed.
      */
-    public void NACK();
+    public void NACK(Message confirmedMessage);
 }

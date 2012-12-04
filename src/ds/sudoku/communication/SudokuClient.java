@@ -265,12 +265,12 @@ public class SudokuClient implements Client {
     }
 
     @Override
-    public void ACK() {
-        
+    public void ACK(Message confirmedMessage) {
+        // Create the message
     }
 
     @Override
-    public void NACK() {
+    public void NACK(Message confirmedMessage) {
         
     }
 
