@@ -22,12 +22,13 @@ import ds.sudoku.logic.SudokuTemplate;
  * Implementation of the Client interface.
  * 
  * <p>
- * This implementiation is internally threaded. It stores a socket and
- * handles incoming and outgoing data. This implementation does not check
- * for the socket being dead. 
+ * This implementiation is internally threaded. It stores a socket and handles
+ * incoming and outgoing data. This implementation does not check for the socket
+ * being dead.
  * </p>
+ * 
  * @author dalhai
- *
+ * 
  */
 public class SudokuClient implements Client {
     

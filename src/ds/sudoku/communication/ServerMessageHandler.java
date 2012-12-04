@@ -33,9 +33,9 @@ public interface ServerMessageHandler {
      * @param server
      *          The {@link Server} who sent the message.
      * @param message
-     *          The {@link LeaveMessage} generated from the incoming data.
+     *          The {@link LeftMessage} generated from the incoming data.
      */
-    public void onLeaveMessageReceived(Server server, LeaveMessage message);
+    public void onLeftMessageReceived(Server server, LeftMessage message);
 
     /**
      * Will be invoked when a new set field message from the server is
