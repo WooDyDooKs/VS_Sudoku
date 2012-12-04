@@ -48,7 +48,7 @@ public interface Client extends Connection, SudokuParticipant {
      *            Name of the player who left the game.
      */
     public void playerLeft(String otherPlayer);
-    
+
     /**
      * Sends the client a game over message indicating that someone won the
      * game.
@@ -84,4 +84,13 @@ public interface Client extends Connection, SudokuParticipant {
      *            The message handler used to handle the incoming messages.
      */
     public void setMessageHandler(ClientMessageHandler handler);
+
+    /**
+     * Set a death handler which will be asynchronously invoked whenever the
+     * client dies.
+     * 
+     * @param handler
+     *            The death handler used to handle client death.
+     */
+    public void setDeathHandler(DeathHandler<Client> handler);
 }

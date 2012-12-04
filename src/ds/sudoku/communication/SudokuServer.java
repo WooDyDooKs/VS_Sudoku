@@ -48,7 +48,8 @@ public class SudokuServer implements Server {
 	private Thread sender;
 
 	// Internal data
-	private ServerMessageHandler handler;
+	private DeathHandler<Server> deathHandler;
+	private ServerMessageHandler messageHandler;
 	private volatile boolean stop;
 
 	private LinkedList<Message> outgoingMessageQueue;
@@ -66,14 +67,18 @@ public class SudokuServer implements Server {
 		this.socket = socket;
 		this.json = json;
 
-		this.handler = null;
+		this.deathHandler = null;
+		this.messageHandler = null;
 
 		this.stop = true;
 
 		try {
 			socket.setSoTimeout(TIMEOUT);
 		} catch (SocketException e) {
-			e.printStackTrace();
+            // We cant really do anything here.
+            // Just let the exception fade away,
+            // it is caught in the listener and sender
+            // threads and will cause onDeath to be called.
 		}
 	}
 
@@ -118,7 +123,7 @@ public class SudokuServer implements Server {
 					 * messages in the queue and dispatch them to the handler.
 					 */
 
-					if (handler == null)
+					if (messageHandler == null)
 						continue;
 					while (!incomingMessageQueue.isEmpty()) {
 
@@ -156,7 +161,7 @@ public class SudokuServer implements Server {
 						if (messageType.equals(Message.class.getName())) {
 							Message message = json.fromJson(parsedLine,
 									Message.class);
-							handler.onRawMessageReceived(SudokuServer.this,
+							messageHandler.onRawMessageReceived(SudokuServer.this,
 									message);
 						}
 						// Deregister
@@ -164,7 +169,7 @@ public class SudokuServer implements Server {
 								.getName())) {
 							DeregisterMessage message = json.fromJson(
 									parsedLine, DeregisterMessage.class);
-							handler.onDeregisterMessageReceived(
+							messageHandler.onDeregisterMessageReceived(
 									SudokuServer.this, message);
 						}
 						// Left
@@ -172,7 +177,7 @@ public class SudokuServer implements Server {
 								.equals(LeftMessage.class.getName())) {
 							LeftMessage message = json.fromJson(parsedLine,
 									LeftMessage.class);
-							handler.onLeftMessageReceived(SudokuServer.this,
+							messageHandler.onLeftMessageReceived(SudokuServer.this,
 									message);
 						}
 						// SetField
@@ -180,28 +185,28 @@ public class SudokuServer implements Server {
 								.getName())) {
 							SetFieldMessage message = json.fromJson(parsedLine,
 									SetFieldMessage.class);
-							handler.onSetFieldMessageReceived(
+							messageHandler.onSetFieldMessageReceived(
 									SudokuServer.this, message);
 						}
 						// ACK
 						else if (messageType.equals(ACKMessage.class.getName())) {
 							ACKMessage message = json.fromJson(parsedLine,
 									ACKMessage.class);
-							handler.onACKReceived(SudokuServer.this, message);
+							messageHandler.onACKReceived(SudokuServer.this, message);
 						}
 						// NACK
 						else if (messageType
 								.equals(NACKMessage.class.getName())) {
 							NACKMessage message = json.fromJson(parsedLine,
 									NACKMessage.class);
-							handler.onNACKReceived(SudokuServer.this, message);
+							messageHandler.onNACKReceived(SudokuServer.this, message);
 						}
 						// Error
 						else if (messageType.equals(ErrorMessage.class
 								.getName())) {
 							ErrorMessage message = json.fromJson(parsedLine,
 									ErrorMessage.class);
-							handler.onErrorMesssageReceived(SudokuServer.this,
+							messageHandler.onErrorMesssageReceived(SudokuServer.this,
 									message);
 						}
 						// GameOver
@@ -209,7 +214,7 @@ public class SudokuServer implements Server {
 								.getName())) {
 							GameOverMessage message = json.fromJson(parsedLine,
 									GameOverMessage.class);
-							handler.onGameOverMessageReceived(
+							messageHandler.onGameOverMessageReceived(
 									SudokuServer.this, message);
 						}
 						// Invite
@@ -217,7 +222,7 @@ public class SudokuServer implements Server {
 								.getName())) {
 							InviteMessage message = json.fromJson(parsedLine,
 									InviteMessage.class);
-							handler.onInviteMessageReceived(SudokuServer.this,
+							messageHandler.onInviteMessageReceived(SudokuServer.this,
 									message);
 						}
 						// NamedSetField
@@ -225,7 +230,7 @@ public class SudokuServer implements Server {
 								.getName())) {
 							NamedSetFieldMessage message = json.fromJson(
 									parsedLine, NamedSetFieldMessage.class);
-							handler.onNamedSetFieldMessageReceived(
+							messageHandler.onNamedSetFieldMessageReceived(
 									SudokuServer.this, message);
 						}
 						// NewGame
@@ -233,7 +238,7 @@ public class SudokuServer implements Server {
 								.getName())) {
 							NewGameMessage message = json.fromJson(parsedLine,
 									NewGameMessage.class);
-							handler.onNewGameMessageReceived(SudokuServer.this,
+							messageHandler.onNewGameMessageReceived(SudokuServer.this,
 									message);
 						}
 						// Score
@@ -241,13 +246,14 @@ public class SudokuServer implements Server {
 								.getName())) {
 							ScoreMessage message = json.fromJson(parsedLine,
 									ScoreMessage.class);
-							handler.onScoreMessageReceived(SudokuServer.this,
+							messageHandler.onScoreMessageReceived(SudokuServer.this,
 									message);
 						}
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				if(!stop)
+				    onDeath(e.getMessage());
 			}
 		}
 	}
@@ -313,7 +319,8 @@ public class SudokuServer implements Server {
 					osw.close();
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				if(!stop)
+				    onDeath(e.getMessage());
 			}
 		}
 
@@ -506,7 +513,7 @@ public class SudokuServer implements Server {
 	 */
 	@Override
 	public void setMessageHandler(ServerMessageHandler handler) {
-		this.handler = handler;
+		this.messageHandler = handler;
 	}
 
 	/**
@@ -546,8 +553,39 @@ public class SudokuServer implements Server {
 			sender = null;
 			receiver = null;
 		} catch (InterruptedException | IOException e) {
-			e.printStackTrace();
+			onDeath(e.getMessage());
 		}
 	}
+
+	/**
+	 * {@inheritDoc Server#setDeathHandler(DeathHandler)}
+	 */
+	@Override
+    public void setDeathHandler(DeathHandler<Server> handler) {
+	    this.deathHandler = handler;
+    }
+
+    /**
+     * Helper method to react to the client dieing.
+     * 
+     * @param cause
+     *            The cause of the death.
+     */
+    private void onDeath(String cause) {
+        String finalCause = cause;
+
+        stop = true;
+
+        // do the cleanup
+        try {
+            socket.close();
+        } catch (IOException e) {
+            finalCause = finalCause + ", " + e.getMessage();
+        }
+
+        // call the death handler if possible
+        if (deathHandler != null)
+            deathHandler.onDeath(this, finalCause);
+    }
 
 }
