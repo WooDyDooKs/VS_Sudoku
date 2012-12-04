@@ -312,4 +312,13 @@ public class SudokuClient implements Client {
         this.handler = handler;
     }
 
+    @Override
+    public void setField(int row, int column, int value) {
+    }
+
+    @Override
+    public void setField(int index, int value) {
+        
+    }
+
 }

@@ -47,7 +47,18 @@ public interface ServerMessageHandler {
      *          The {@link SetFieldMessage} generated from the incoming data.
      */
     public void onSetFieldMessageReceived(Server server, SetFieldMessage message);
-
+    
+    /**
+     * Will be invoked when a new named set field message from the server is
+     * received.
+     * 
+     * @param server
+     *          The {@link Server} who sent the message.
+     * @param message
+     *          The {@link NamedSetFieldMessage} generated from the incoming data.
+     */
+    public void onNamedSetFieldMessageReceived(Server server, NamedSetFieldMessage message);
+    
     /**
      * Will be invoked when a new error message from the server is
      * received.

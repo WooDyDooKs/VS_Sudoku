@@ -17,10 +17,10 @@ public interface ClientMessageHandler {
      * Will be invoked when a new register message from target client is
      * received.
      * 
-     * @param message
-     *            The {@link RegisterMessage} generated from the incoming data.
      * @param client
      *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link RegisterMessage} generated from the incoming data.
      */
     public void onRegisterMessageReceived(Client client, RegisterMessage message);
 
@@ -28,11 +28,11 @@ public interface ClientMessageHandler {
      * Will be invoked when a new deregistration message from target client is
      * received.
      * 
+     * @param client
+     *            The {@link Client} who sent the message.
      * @param message
      *            The {@link DeregisterMessage} generated from the incoming
      *            data.
-     * @param client
-     *            The {@link Client} who sent the message.
      */
     public void onDeregisterMessageReceived(Client client,
             DeregisterMessage message);
@@ -40,20 +40,20 @@ public interface ClientMessageHandler {
     /**
      * Will be invoked when a new invite message from target client is received.
      * 
-     * @param message
-     *            The {@link InviteMessage} generated from the incoming data.
      * @param client
      *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link InviteMessage} generated from the incoming data.
      */
     public void onInviteMessageReceived(Client client, InviteMessage message);
 
     /**
      * Will be invoked when a leave message is received.
      * 
-     * @param message
-     *            The {@link LeaveMessage} generated from the incoming data.
      * @param client
-     *            The {@link Client} who sent the message.
+     *            The {@link Client} who sent the message
+     * @param message
+     *            The {@link LeaveMessage} generated from the incoming data..
      */
     public void onLeaveMessageReceived(Client client, LeaveMessage message);
 
@@ -61,12 +61,25 @@ public interface ClientMessageHandler {
      * Will be invoked when a message representing a request to set a field is
      * received.
      * 
-     * @param message
-     *            The {@link SetFieldMessage} generated from the incoming data.
      * @param client
      *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link SetFieldMessage} generated from the incoming data.
      */
     public void onSetFieldMessageReceived(Client client, SetFieldMessage message);
+
+    /**
+     * Will be invoked when a message representing a request to set a field with
+     * an attached name is received.
+     * 
+     * @param client
+     *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link NamedSetFieldMessage} generated from the incoming
+     *            data.
+     */
+    public void onNamedSetFieldMessageReceived(Client client,
+            NamedSetFieldMessage message);
 
     /**
      * Will be invoked when a message representing an error is received.
