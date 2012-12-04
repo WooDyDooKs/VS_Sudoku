@@ -248,13 +248,19 @@ public class SudokuClient implements Client {
                     // The next message to be sent.
                     Message nextMessage = null;
 
+                    boolean canStop = false;
                     // Aquire the lock
                     synchronized (outgoingMessageQueue) {
                         // Check if there is something on the queue.
                         if (!outgoingMessageQueue.isEmpty()) {
                             nextMessage = outgoingMessageQueue.pop();
+                        } else {
+                            canStop = true;
                         }
                     }
+                    
+                    // Check if we need to stop
+                    if(stop && canStop) break;
 
                     // No message? Continue
                     if (nextMessage == null)
