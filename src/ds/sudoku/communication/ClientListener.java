@@ -112,7 +112,8 @@ public class ClientListener implements ConnectionManager {
         
         try {
             listener.join();
-        } catch (InterruptedException e) {
+            serverSocket.close();
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
     }
