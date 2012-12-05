@@ -29,7 +29,14 @@ public class ClientListener implements ConnectionManager {
      */
     public final static int TIMEOUT = 5000;
 
-    /**
+    /**<Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="64dp"
+        android:text="Button" />
      * The time in millisecons the reciever thread sleeps if no handler is
      * specified.
      */
@@ -115,7 +122,9 @@ public class ClientListener implements ConnectionManager {
         try {
             listener.join();
             serverSocket.close();
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
+        	e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -158,8 +167,10 @@ public class ClientListener implements ConnectionManager {
                     // Pass the client to the handler
                     handler.onNewConnectionAccepted(sudokuClient);
                 }
-            } catch (InterruptedException | IOException e) {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+            	e.printStackTrace();
+            } catch (IOException e) {
+            	e.printStackTrace();
             }
         }
 
