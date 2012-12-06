@@ -552,7 +552,9 @@ public class SudokuServer implements Server {
 
 			sender = null;
 			receiver = null;
-		} catch (InterruptedException | IOException e) {
+		} catch (InterruptedException  e) {
+			onDeath(e.getMessage());
+		} catch (IOException e) {
 			onDeath(e.getMessage());
 		}
 	}

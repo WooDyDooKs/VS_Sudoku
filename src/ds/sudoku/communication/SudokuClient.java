@@ -550,7 +550,9 @@ public class SudokuClient implements Client {
 
             receiver = null;
             sender = null;
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
+        	onDeath(e.getMessage());
+        } catch (IOException e) {
             onDeath(e.getMessage());
         }
     }
