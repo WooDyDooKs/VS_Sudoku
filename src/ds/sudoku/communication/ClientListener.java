@@ -5,22 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import ds.sudoku.communication.serialization.ACKMessageAdapter;
-import ds.sudoku.communication.serialization.DeregisterMessageAdapter;
-import ds.sudoku.communication.serialization.ErrorMessageAdapter;
-import ds.sudoku.communication.serialization.GameOverMessageAdapter;
-import ds.sudoku.communication.serialization.InviteMessageAdapter;
-import ds.sudoku.communication.serialization.LeaveMessageAdapter;
-import ds.sudoku.communication.serialization.LeftMessageAdapter;
-import ds.sudoku.communication.serialization.NACKMessageAdapter;
-import ds.sudoku.communication.serialization.NamedSetFieldMessageAdapter;
-import ds.sudoku.communication.serialization.NewGameMessageAdapter;
-import ds.sudoku.communication.serialization.RawMessageAdapter;
-import ds.sudoku.communication.serialization.RegisterMessageAdapter;
-import ds.sudoku.communication.serialization.ScoreMessageAdapter;
-import ds.sudoku.communication.serialization.SetFieldMessageAdapter;
 
 public class ClientListener implements ConnectionManager {
 
@@ -51,37 +35,7 @@ public class ClientListener implements ConnectionManager {
     public ClientListener(int port) {
         this.handler = null;
         this.stop = true;
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ACKMessage.class,
-                new ACKMessageAdapter());
-        gsonBuilder.registerTypeAdapter(NACKMessage.class,
-                new NACKMessageAdapter());
-        gsonBuilder.registerTypeAdapter(RegisterMessage.class,
-                new RegisterMessageAdapter());
-        gsonBuilder.registerTypeAdapter(DeregisterMessage.class,
-                new DeregisterMessageAdapter());
-        gsonBuilder.registerTypeAdapter(ErrorMessage.class,
-                new ErrorMessageAdapter());
-        gsonBuilder.registerTypeAdapter(GameOverMessage.class,
-                new GameOverMessageAdapter());
-        gsonBuilder.registerTypeAdapter(InviteMessage.class,
-                new InviteMessageAdapter());
-        gsonBuilder.registerTypeAdapter(LeftMessage.class,
-                new LeftMessageAdapter());
-        gsonBuilder.registerTypeAdapter(SetFieldMessage.class,
-                new SetFieldMessageAdapter());
-        gsonBuilder.registerTypeAdapter(NamedSetFieldMessage.class,
-                new NamedSetFieldMessageAdapter());
-        gsonBuilder.registerTypeAdapter(ScoreMessage.class,
-                new ScoreMessageAdapter());
-        gsonBuilder.registerTypeAdapter(NewGameMessage.class,
-                new NewGameMessageAdapter());
-        gsonBuilder.registerTypeAdapter(LeaveMessage.class,
-                new LeaveMessageAdapter());
-        gsonBuilder.registerTypeAdapter(Message.class, new RawMessageAdapter());
-
-        json = gsonBuilder.create();
+        this.json = GsonFactory.create();
         
         serverSocket = null;
         try {
@@ -115,7 +69,9 @@ public class ClientListener implements ConnectionManager {
         try {
             listener.join();
             serverSocket.close();
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -130,7 +86,8 @@ public class ClientListener implements ConnectionManager {
 
     /**
      * The threaded core waiting for new connections. Calls the handler if a new
-     * connection is accepted.
+     * connection is accepted. If no handler is specified, the listener will wait
+     * {@link ClientListener#NO_HANDLER_SLEEP_TIME} ms until it continues.
      * 
      * @author dalhai
      * 
@@ -158,7 +115,9 @@ public class ClientListener implements ConnectionManager {
                     // Pass the client to the handler
                     handler.onNewConnectionAccepted(sudokuClient);
                 }
-            } catch (InterruptedException | IOException e) {
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch(IOException e) {
                 e.printStackTrace();
             }
         }
