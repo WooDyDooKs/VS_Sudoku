@@ -3,22 +3,27 @@ package ds.sudoku.server;
 import java.util.Arrays;
 import java.util.List;
 
+import ds.sudoku.communication.ClientListener;
 import ds.sudoku.communication.ConnectionManager;
+import ds.sudoku.communication.Server;
 import ds.sudoku.exceptions.server.AlreadyExistingUsername;
 
 
 public class ServerFrontend {
 	
+	private static final int SERVER_PORT = 8888;
+	
 	public static final UserManagement userManagement = new UserManagement();
 	public static final GamesManager gamesManager = new GamesManager();
+	public static final DefaultMessageHandler messageHandler = new DefaultMessageHandler();
+
 	
 	public static void main(String[] args) throws InterruptedException {
-		ConnectionManager connectionManager = null;
 		
-		//connectionManager = new ConnectionManagerImpl();
+		ConnectionManager connectionManager = new ClientListener(SERVER_PORT);
+		connectionManager.setConnectionHandler(new DefaultConnectionHandler());
+		connectionManager.acceptConnections();
 		
-		//connectionManager.setConnectionHandler(new DefaultConnectionHandler());
-		//connectionManager.acceptConnections();
 		
 		/*SudokuSolution s = SudokuSolution.getRandomSolution(SudokuSolution.Difficulty.MEDIUM);
 		
@@ -27,34 +32,27 @@ public class ServerFrontend {
 			System.out.println(Arrays.toString(t[i]));
 		}*/
 		
-		User p1 = null, p2 = null;
-		
-		try {
-			p1 = userManagement.register("a", null);
-			p2 = userManagement.register("b", null);
-		} catch (AlreadyExistingUsername e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		//System.out.println(userManagement.getUser("a"));
-		
-		System.out.println(gamesManager.idleUsers);
-		
-		
-		gamesManager.startNewGameWithRandom(p1);
-		//gamesManager.startNewGame(p1, p2);
-		
-		System.out.println(gamesManager.idleUsers);
-
-		GameHandler h = p1.getGame().getHandler();
-		
-		h.setField(p2, 3, 3, 3);
-		
-		Thread.sleep(10000);
-		h.stopGame();
-		
+//		User p1 = null, p2 = null;
+//		
+//		try {
+//			p1 = userManagement.register("a", null);
+//			p2 = userManagement.register("b", null);
+//		} catch (AlreadyExistingUsername e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
+//		//System.out.println(userManagement.getUser("a"));
+//
+//
+//		GameHandler h = p1.getGame().getHandler();
+//		
+//		h.setField(p2, 3, 3, 3);
+//		
+//		Thread.sleep(10000);
+//		h.stopGame();
+//		
 		
 	}
 

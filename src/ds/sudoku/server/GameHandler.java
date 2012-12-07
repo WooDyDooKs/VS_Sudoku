@@ -2,6 +2,10 @@ package ds.sudoku.server;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import ds.sudoku.communication.Client;
+import ds.sudoku.exceptions.SudokuError;
+import ds.sudoku.logic.SudokuTemplate;
 import static ds.sudoku.server.ServerFrontend.userManagement;
 
 public class GameHandler implements Runnable {
@@ -20,18 +24,25 @@ public class GameHandler implements Runnable {
 	
 	public void startGame() {
 		actorThread.start();
+		
+		SudokuTemplate template = game.getSolution().createTemplate();
+		
+		// notify all players that the game started
+		for(User p : game.getPlayers()) {
+			p.getClient().newGame(template);
+		}
 	}
 	
-	public void stopGame() {
-		try {
-			actorThread.interrupt();
-			actorThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		game.destroy();
-	}
+//	public void stopGame() {
+//		try {
+//			actorThread.interrupt();
+//			actorThread.join();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		game.destroy();
+//	}
 	
 	public void setField(User player, int row, int column, int value) {
 		try {
@@ -54,21 +65,36 @@ public class GameHandler implements Runnable {
 			}
 			
 			if(!isValidGameMove(nextMove)) {
-				// TODO send error
+				User user = nextMove.getExecutingPlayer();
+				user.getClient().sendError(SudokuError.INVALID_FIELD_SET, "Invalid field set");
+				continue;
 			}
 			
+			// calculate scores			
 			String leadingUsername = score.updateScore(nextMove);
 			User leadingUser = userManagement.getUser(leadingUsername);
 			
+			// update game
 			game.updateCell(nextMove);
 			
+			boolean gameOver = game.isOver();
+			
 			for (User user : game.getPlayers()) {
-				user.getClient().score(user == leadingUser);
-				user.getClient().setField(nextMove.getRow(), nextMove.getColumn(), nextMove.getValue(), user.getUsername());
+				Client client = user.getClient();
+				
+				client.score(user == leadingUser);
+				client.setField(nextMove.getRow(), nextMove.getColumn(), nextMove.getValue(), user.getUsername());
+				
+				if(gameOver) {
+					client.gameOver(leadingUsername);
+				}
 			}
 			
-			
-			// TODO handle game move (send to players etc) 
+			if(gameOver) {
+				game.destroy();
+				actorThread.interrupt();
+				break;
+			}
 		}
 	}
 	

@@ -8,10 +8,13 @@ import ds.sudoku.communication.DeregisterMessage;
 import ds.sudoku.communication.ErrorMessage;
 import ds.sudoku.communication.InviteMessage;
 import ds.sudoku.communication.LeaveMessage;
+import ds.sudoku.communication.Message;
 import ds.sudoku.communication.NACKMessage;
+import ds.sudoku.communication.NamedSetFieldMessage;
 import ds.sudoku.communication.NewGameMessage;
 import ds.sudoku.communication.RegisterMessage;
 import ds.sudoku.communication.SetFieldMessage;
+import ds.sudoku.exceptions.SudokuError;
 import ds.sudoku.exceptions.server.AlreadyExistingUsername;
 
 public class DefaultMessageHandler implements ClientMessageHandler {
@@ -23,13 +26,17 @@ public class DefaultMessageHandler implements ClientMessageHandler {
 		
 		try {
 			User user = userManagement.register(username, client);
-			client.setMessageHandler(new UserMessageHandler(user));
+			
+			UserMessageHandler umh = new UserMessageHandler(user);
+			client.setMessageHandler(umh);
+			client.setDeathHandler(umh);
+			
+			client.ACK(message);
 		} catch (AlreadyExistingUsername e) {
-			// TODO: message.reject()
-		}
-		
-		// TODO: message.accept
-		
+			client.sendError(
+					SudokuError.USERNAME_ALREADY_EXISTS, 
+					"Username " + username + " does already exist.");
+		}		
 	}
 
 	@Override
@@ -74,6 +81,18 @@ public class DefaultMessageHandler implements ClientMessageHandler {
 	public void onNACKMessageReceived(Client client, NACKMessage message) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onNamedSetFieldMessageReceived(Client client,
+			NamedSetFieldMessage message) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void onRawMessageReceived(Client client, Message message) {
+		// TODO
 	}
 	
 	

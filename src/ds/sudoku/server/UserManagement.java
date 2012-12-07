@@ -13,6 +13,8 @@ import ds.sudoku.communication.Client;
 import ds.sudoku.exceptions.server.AlreadyExistingUsername;
 import ds.sudoku.exceptions.server.NonExistingUsername;
 
+import static ds.sudoku.server.ServerFrontend.gamesManager;
+
 public class UserManagement {
 		
 	private Map<String, User> connectedUsers = new HashMap<String, User>();
@@ -50,7 +52,6 @@ public class UserManagement {
 		User user = new User(id, username, client);
 		
 		connectedUsers.put(username, user);
-		ServerFrontend.gamesManager.addIdleUser(user);
 		return user;
 	}
 	
@@ -64,7 +65,6 @@ public class UserManagement {
 //		}
 		
 		connectedUsers.remove(user.getUsername());
-		ServerFrontend.gamesManager.removeIdleUser(user);
 
 //		dbUsers.remove(dbUser);
 	}

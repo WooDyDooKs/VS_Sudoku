@@ -125,4 +125,16 @@ public class Game {
 	public List<User> getPlayers(){
 		return players;
 	}
+	
+	public boolean isOver() {		
+		for(int row=1; row<=9; row++) {
+			for(int col=1; col<=9; col++) {
+				if(solution.getField(row, col) != getField(row, col)) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
 }
