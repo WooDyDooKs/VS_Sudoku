@@ -1,5 +1,6 @@
 package ds.sudoku.communication;
 
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -20,6 +21,8 @@ import com.google.gson.Gson;
  */
 public enum ServerFactory {
     ;
+    
+    public static final int TIMEOUT = 2000;
 
     /**
      * The core of the server factory, used to create a new sudoku server in the
@@ -47,7 +50,8 @@ public enum ServerFactory {
 
         @Override
         public Server call() throws Exception {
-            Socket socket = new Socket(address, port);
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(address, port), TIMEOUT);
             Gson json = GsonFactory.create();
 
             Server result = new SudokuServer(socket, json);

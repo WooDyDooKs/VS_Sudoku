@@ -25,4 +25,12 @@ public interface ConnectionManager {
      * @param handler
      */
     public void setConnectionHandler(ConnectionHandler handler);
+
+    /**
+     * Check if the connection manager is accepting connections at the moment.
+     * 
+     * @return {@code true}, if the manager is accepting connections,
+     *         {@code false}, else.
+     */
+    public boolean isAccepting();
 }

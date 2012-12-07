@@ -117,7 +117,7 @@ public class SudokuClient implements Client {
                     if (line == null) {
                         continue;
                     }
-
+                    
                     // Push the message into the message queue
                     incomingMessageQueue.addLast(line);
 

@@ -130,4 +130,9 @@ public class ClientListener implements ConnectionManager {
         }
 
     }
+
+    @Override
+    public boolean isAccepting() {
+        return !this.stop;
+    }
 }
