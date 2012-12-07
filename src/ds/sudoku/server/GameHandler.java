@@ -111,7 +111,7 @@ public class GameHandler implements Runnable {
 			return false;
 		}
 		
-		return game.getSolution().isClue(row, column);
+		return !game.getSolution().isClue(row, column);
 	}
 
 
