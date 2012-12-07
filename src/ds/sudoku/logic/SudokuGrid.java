@@ -276,6 +276,49 @@ public class SudokuGrid {
             return cells[row][column];
         }
     }
+
+    class RowsIterator implements Iterator<Iterator<Cell>>{
+        int row = -1;
+        public boolean hasNext(){
+           return row < 8;
+        }
+        public Iterator<Cell> next() {
+            row++;
+            return row(row);
+        }
+        public void remove(){
+        throw new UnsupportedOperationException();
+        }
+    }
+
+    class ColumnsIterator implements Iterator<Iterator<Cell>>{
+        int column = -1;
+        public boolean hasNext(){
+            return column < 8;
+        }
+        public Iterator<Cell> next() {
+            column++;
+            return column(column);
+        }
+        public void remove(){
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    class BoxesIterator implements Iterator<Iterator<Cell>>{
+        int box = -1;
+        public boolean hasNext(){
+            return box < 8;
+        }
+
+        public Iterator<Cell> next() {
+            box++;
+            return box(box);
+        }
+        public void remove(){
+            throw new UnsupportedOperationException();
+        }
+    }
 }
 
 

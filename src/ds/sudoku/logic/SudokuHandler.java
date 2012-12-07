@@ -56,6 +56,17 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
     }
 
     @Override
+    public String[] getCandidatesString(int row, int column) {
+        //return sudoku.getCandidates(row - 1,column - 1);
+        String[] candidates = new String[9];
+        for(int i = 1; i <= 9; i++){
+           if(sudoku.getCandidates(row -1, column -1).get(i)) candidates[i] = Integer.toString(i);
+           else candidates[i] = "";
+        }
+        return candidates;
+    }
+
+    @Override
     public boolean showCandidates(int row, int column) {
         return sudoku.getValue(row - 1,column - 1) == 0;
     }

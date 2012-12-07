@@ -19,6 +19,8 @@ public interface SudokuInfo{
      * for digit d just use get(d). (s nullte bit wird verschwändet.. :))
      */
     public BitSet getCandidates(int row, int column);
+    //TODO: String[] mit no verfüegbare kandidate oder "" falls nöd verfüegbar
+    public String[] getCandidatesString(int row, int column);
 
     /**
      *
@@ -34,5 +36,9 @@ public interface SudokuInfo{
      * @return  if the grid already contains 9 cells with this digit
      */
     public boolean isDigitCompleted(int digit);
+
+    //public boolean wasSetByYou(int row, int column);
+
+    //public boolean isClue(int row, int column);
 }
 
