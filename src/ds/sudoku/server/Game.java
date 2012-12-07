@@ -1,5 +1,6 @@
 package ds.sudoku.server;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.bson.types.BasicBSONList;
@@ -14,7 +15,8 @@ import com.mongodb.DBObject;
 public class Game {
 	private String gameID;
 	private SudokuSolution solution;
-	private List<User> players;
+	private List<User> initialPlayers;
+	private List<User> activePlayers;
 	
 	private DBCollection cells;
 	private DBCollection games;
@@ -23,7 +25,8 @@ public class Game {
 
 	public Game(SudokuSolution solution, List<User> players) {
 		this.solution = solution;
-		this.players = players;
+		this.initialPlayers = players;
+		this.activePlayers = new LinkedList<User>(initialPlayers);
 		
 		// add new game to games collection
 		DB db = DBHelper.getDB();
@@ -93,7 +96,7 @@ public class Game {
 	}
 
 	public void destroy() {
-		for(User p : players) {
+		for(User p : initialPlayers) {
 			p.setGame(null);
 		}
 		
@@ -122,8 +125,17 @@ public class Game {
 		return ( cells.findOne(searchedField).get("player").toString() );
 	}
 	
-	public List<User> getPlayers(){
-		return players;
+	public List<User> getInitialPlayers(){
+		return initialPlayers;
+	}
+	
+	public List<User> getActivePlayers() {
+		return activePlayers;
+	}
+	
+	public void removeActivePlayer(User user) {
+		user.setGame(null);
+		activePlayers.remove(user);
 	}
 	
 	public boolean isOver() {		

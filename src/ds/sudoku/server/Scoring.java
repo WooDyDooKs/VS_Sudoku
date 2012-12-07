@@ -9,7 +9,7 @@ public class Scoring {
 	
 	public Scoring(Game game){
 		this.game = game;
-		for (User us: game.getPlayers()){
+		for (User us: game.getInitialPlayers()){
 			scoreTable.put(us.getUsername(), 0);
 		}
 	}

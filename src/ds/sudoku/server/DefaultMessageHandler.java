@@ -36,7 +36,7 @@ public class DefaultMessageHandler implements ClientMessageHandler {
 			client.sendError(
 					SudokuError.USERNAME_ALREADY_EXISTS, 
 					"Username " + username + " does already exist.");
-		}		
+		}
 	}
 
 	@Override

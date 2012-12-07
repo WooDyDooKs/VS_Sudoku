@@ -52,7 +52,8 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 
 	@Override
 	public void onLeaveMessageReceived(Client client, LeaveMessage message) {
-		// TODO: if all players left, end the game
+		GameHandler handler = user.getGame().getHandler();
+		handler.playerLeft(user);
 	}
 
 	@Override
@@ -72,19 +73,28 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 			User other = userManagement.getUser(invMsg.getSender());
 			gamesManager.startNewGame(user, other);
 		}
-		
 	}
 
 	@Override
 	public void onNACKMessageReceived(Client client, NACKMessage message) {
-		// TODO Auto-generated method stub
-		super.onNACKMessageReceived(client, message);
+		Message nackMsg = message.getConfirmedMessage();
+		
+		if(nackMsg instanceof InviteMessage) {
+			InviteMessage invMsg = (InviteMessage) nackMsg;
+			User other = userManagement.getUser(invMsg.getSender());
+			other.getClient().NACK(invMsg);
+		}
 	}
 
 	@Override
 	public void onDeath(Client instance, String message) {
 		try {
 			userManagement.deregister(user);
+			Game game = user.getGame();
+			if(game != null) {
+				GameHandler handler = game.getHandler();
+				handler.playerLeft(user);
+			}
 		} catch (NonExistingUsername e) {
 			e.printStackTrace();
 		}

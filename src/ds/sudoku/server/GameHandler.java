@@ -28,7 +28,7 @@ public class GameHandler implements Runnable {
 		SudokuTemplate template = game.getSolution().createTemplate();
 		
 		// notify all players that the game started
-		for(User p : game.getPlayers()) {
+		for(User p : game.getActivePlayers()) {
 			p.getClient().newGame(template);
 		}
 	}
@@ -43,6 +43,21 @@ public class GameHandler implements Runnable {
 //		
 //		game.destroy();
 //	}
+	
+	public synchronized void playerLeft(User user) {
+		game.removeActivePlayer(user);
+		
+		if(game.getActivePlayers().isEmpty()) {
+			try {
+				actorThread.interrupt();
+				actorThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			game.destroy();
+		}
+	}
 	
 	public void setField(User player, int row, int column, int value) {
 		try {
@@ -79,7 +94,7 @@ public class GameHandler implements Runnable {
 			
 			boolean gameOver = game.isOver();
 			
-			for (User user : game.getPlayers()) {
+			for (User user : game.getActivePlayers()) {
 				Client client = user.getClient();
 				
 				client.score(user == leadingUser);
