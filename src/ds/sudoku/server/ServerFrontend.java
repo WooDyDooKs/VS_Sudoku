@@ -19,6 +19,7 @@ public class ServerFrontend {
 
 	
 	public static void main(String[] args) throws InterruptedException {
+		ServerLog.l("Starting server, listeing on port %d", SERVER_PORT);
 		
 		ConnectionManager connectionManager = new ClientListener(SERVER_PORT);
 		connectionManager.setConnectionHandler(new DefaultConnectionHandler());

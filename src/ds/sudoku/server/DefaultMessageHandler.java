@@ -32,6 +32,8 @@ public class DefaultMessageHandler implements ClientMessageHandler {
 			client.setDeathHandler(umh);
 			
 			client.ACK(message);
+			
+			ServerLog.l("User %s registered", username);
 		} catch (AlreadyExistingUsername e) {
 			client.sendError(
 					SudokuError.USERNAME_ALREADY_EXISTS, 

@@ -27,6 +27,8 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 			userManagement.deregister(user);
 			client.setMessageHandler(ServerFrontend.messageHandler);
 			client.ACK(message);
+			
+			ServerLog.l("User %s deregistered.", user.getUsername());
 		} catch (NonExistingUsername e) {
 			// this should never happen!
 			e.printStackTrace();
@@ -41,9 +43,13 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 		if(receiver != null) {
 			Client receiverClient = userManagement.getUser(receiver).getClient();
 			receiverClient.invite(sender);
+			
+			ServerLog.l("Got InviteRequest from %s to %s.", sender, receiver);
 		} else {
 			// random request
 			User other = gamesManager.matchWithOtherRandomUser(user);
+			ServerLog.l("User %s requested random match.", sender);
+
 			if(other != null) {
 				gamesManager.startNewGame(user, other);
 			}
@@ -54,14 +60,24 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 	public void onLeaveMessageReceived(Client client, LeaveMessage message) {
 		GameHandler handler = user.getGame().getHandler();
 		handler.playerLeft(user);
+		ServerLog.l("User %s has left the game.", user.getUsername());
+
 	}
 
 	@Override
 	public void onSetFieldMessageReceived(Client client, SetFieldMessage message) {
 		assert !message.isZeroBased() : "zero based index not supported!";
 		
-		GameHandler handler = user.getGame().getHandler();		
-		handler.setField(user, message.getRow(), message.getColumn(), message.getValue());
+		GameHandler handler = user.getGame().getHandler();
+		
+		int row = message.getRow();
+		int column = message.getColumn();
+		int value = message.getValue();
+		
+		handler.setField(user, row, column, value);
+		
+		ServerLog.l("User %s set field (%d, %d) to %d.", user.getUsername(), row, column, value);
+
 	}
 
 	@Override
@@ -72,6 +88,8 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 			InviteMessage invMsg = (InviteMessage) ackMsg;
 			User other = userManagement.getUser(invMsg.getSender());
 			gamesManager.startNewGame(user, other);
+			
+			ServerLog.l("Starting new game with players %s and %s", user.getUsername(), other.getUsername());
 		}
 	}
 
@@ -83,12 +101,16 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 			InviteMessage invMsg = (InviteMessage) nackMsg;
 			User other = userManagement.getUser(invMsg.getSender());
 			other.getClient().NACK(invMsg);
+			
+			ServerLog.l("User %s requested invate from", user.getUsername(), other.getUsername());
 		}
 	}
 
 	@Override
 	public void onDeath(Client instance, String message) {
 		try {
+			ServerLog.l("User %s disconnected.", user.getUsername());
+
 			userManagement.deregister(user);
 			Game game = user.getGame();
 			if(game != null) {
