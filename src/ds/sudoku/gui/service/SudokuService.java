@@ -40,8 +40,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 	private UserStateListener userStateListener;
 	private String username;
 	
-	//public static final String SERVER_HOST = "sudoku.gebaschtel.ch";
-	public static final String SERVER_HOST = "10.0.0.11";
+	public static final String SERVER_HOST = "sudoku.gebaschtel.ch";
 	public static final int SERVER_PORT = 8888;
 	
 	//////////// Public Methods for GUI  ////////////
