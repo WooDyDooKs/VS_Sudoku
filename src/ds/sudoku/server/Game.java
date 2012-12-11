@@ -2,6 +2,7 @@ package ds.sudoku.server;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.bson.types.BasicBSONList;
 import org.bson.types.ObjectId;
@@ -33,7 +34,7 @@ public class Game {
 		games = db.getCollection(DBHelper.GAMES);
 		BasicDBObject game = new BasicDBObject();
 		
-		// add players to game
+		// add players to game		
 		DBObject dbPlayers = new BasicDBList();
 		for(int i=0; i<players.size(); i++) {
 			dbPlayers.put(String.valueOf(i), players.get(i).getUsername());

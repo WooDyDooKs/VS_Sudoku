@@ -49,12 +49,12 @@ public class InviteMessageAdapter extends MessageSerializer implements
 		// Extract the sender
 		JsonElement senderElement = jsonMessageObject
 				.get(SerializationKeys.SENDER_KEY);
-		final String sender = senderElement.getAsString();
+		final String sender = (senderElement != null) ? senderElement.getAsString() : null;
 
 		// Extract the receiver
 		JsonElement receiverElement = jsonMessageObject
 				.get(SerializationKeys.RECEIVER_KEY);
-		final String receiver = receiverElement.getAsString();
+		final String receiver = (receiverElement != null) ? receiverElement.getAsString() : null;
 		
 		return new InviteMessage(sender, receiver, customValues, customProperties);
 	}

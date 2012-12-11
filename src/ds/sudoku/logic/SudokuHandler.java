@@ -1,9 +1,5 @@
 package ds.sudoku.logic;
 
-import ds.sudoku.logic.android_workaround.Handler;  // TODO: Change to android Handler
-import ds.sudoku.logic.android_workaround.Message; // TODO: Change to android Message
-import ds.sudoku.logic.android_workaround.Server;  // TODO: Change to communication.Server
-
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,11 +14,11 @@ import java.util.List;
  * But that doesn't make a difference for the gui team because the things a user wants to
  * do already happen, just without the involvement of the server.
  */
-public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePublisher {
+public class SudokuHandler extends android.os.Handler implements SudokuInfo, SudokuChangePublisher {
     private List<SudokuChangeListener> listeners = new LinkedList<SudokuChangeListener>();
     private final SudokuGrid sudoku;
     public final String username;
-    private Server server;
+//    private Server server;
 
     public final static int GUIRequestSetDigit = 1;
     public final static int GUIRequestRemoveDigit = 2; //TODO:: was heisst das gnau im multiplayer kontext
@@ -33,51 +29,43 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
 
     public final static int ServerRequestSetDigit = 7;
 
-    public SudokuHandler(SudokuTemplate template, String username, Server server) {
+    public SudokuHandler(SudokuTemplate template, String username) {
         sudoku = new SudokuGrid(template, this);
         this.username = username;
-        this.server = server;
+//        this.server = server;
     }
 
-
-    @Override
     public void addSudokuChangeListener(SudokuChangeListener listener) {
         listeners.add(listener);
     }
 
-    @Override
     public int getValue(int row, int column) {
         return sudoku.getValue(row - 1,column -1);
     }
 
-    @Override
     public BitSet getCandidates(int row, int column) {
         return sudoku.getCandidates(row - 1,column - 1);
     }
 
-    @Override
     public String[] getCandidatesString(int row, int column) {
-        //return sudoku.getCandidates(row - 1,column - 1);
-        String[] candidates = new String[9];
+        String[] candidates = new String[10]; //10 nicht 9
         for(int i = 1; i <= 9; i++){
            if(sudoku.getCandidates(row -1, column -1).get(i)) candidates[i] = Integer.toString(i);
-           else candidates[i] = "";
+           else candidates[i] = " ";// TODO martina bescheid sageN :)
         }
         return candidates;
     }
 
-    @Override
     public boolean showCandidates(int row, int column) {
         return sudoku.getValue(row - 1,column - 1) == 0;
     }
 
-    @Override
     public boolean isDigitCompleted(int digit) {
         return sudoku.isDigitCompleted(digit);
     }
 
     @Override
-    public void handleMessage(Message msg) {
+    public void handleMessage(android.os.Message msg) {
         switch(msg.what) {
             case GUIRequestSetDigit: {
                 CellInfo cell = (CellInfo) msg.obj;
@@ -85,7 +73,7 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
                 //System.out.println("sudoku: set digit " + cell.digit + " at " + cell.row + "/" + cell.column);
                 sudoku.setDigit(cell, SudokuGrid.Trigger.user);
                 //System.out.println("\t digit at " + cell.row + "/" + cell.column + " is now " + sudoku.getValue(cell.row,cell.column));
-                server.setField(cell.row, cell.column, cell.digit);
+//                server.setField(cell.row, cell.column, cell.digit);
                 break;
             }
             case GUIRequestRemoveDigit: {

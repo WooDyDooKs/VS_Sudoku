@@ -41,8 +41,11 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 		String sender = message.getSender();
 		
 		if(receiver != null) {
-			Client receiverClient = userManagement.getUser(receiver).getClient();
-			receiverClient.invite(sender);
+			Client receiverClient = userManagement.getUser(receiver).getClient();			
+			
+			// TODO this is a workaround
+			InviteMessage inv = new InviteMessage(user.getUsername(), receiver);
+			receiverClient.sendMessage(inv);
 			
 			ServerLog.l("Got InviteRequest from %s to %s.", sender, receiver);
 		} else {
@@ -61,7 +64,6 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 		GameHandler handler = user.getGame().getHandler();
 		handler.playerLeft(user);
 		ServerLog.l("User %s has left the game.", user.getUsername());
-
 	}
 
 	@Override
@@ -102,7 +104,7 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 			User other = userManagement.getUser(invMsg.getSender());
 			other.getClient().NACK(invMsg);
 			
-			ServerLog.l("User %s requested invate from", user.getUsername(), other.getUsername());
+			ServerLog.l("User %s requested invite from", user.getUsername(), other.getUsername());
 		}
 	}
 

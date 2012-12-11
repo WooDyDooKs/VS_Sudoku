@@ -1,0 +1,55 @@
+<resources>
+
+    <string name="app_name">SudokuGUI</string>
+    <string name="menu_settings">Pencilmarks</string>
+    <string name="title_activity_main">MainActivity</string>
+    
+    <string name="singleplayer">Singleplayer</string>
+    <string name="multiplayer">Multiplayer</string>
+    <string name="username_hint">Enter Username...</string>
+    <string name="search_hint">Search opponent...</string>
+    <string name="registerfirst_hint">Register first...</string>
+    <string name="multiplayerfirst_hint">Choose multiplayer...</string>
+    <string name="search_button">Search</string>
+    <string name="register_button">Register</string>
+    <string name="deregister_button">Deregister</string>
+    
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+
+    <string-array name="singleplayer_array">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
+    <string-array name="multiplayer_array">
+        <item>1on1</item>
+        <item>2on2</item>
+        <item>Deathmatch</item>
+    </string-array>
+
+    <string name="title_activity_game">GameActivity</string>
+    
+    <string-array name="numPad_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>Delete</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>Pencil</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>Random</item>
+    </string-array>
+
+</resources>

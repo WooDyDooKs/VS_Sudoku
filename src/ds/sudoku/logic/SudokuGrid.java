@@ -48,11 +48,13 @@ public class SudokuGrid {
         return setDigit(cell.row, cell.column, cell.digit, trigger);
     }
     protected boolean setDigit(int row, int column, int digit, Trigger trigger) {
-        if(cells[row][column].value == digit) return false;
+        if(cells[row][column].value == digit || cells[row][column].isClue) return false; //TODO or angefügt!!!!
         moves.add(new Move(MoveKind.setDigit, row, column, digit, trigger));
         cells[row][column].value = digit;
         updateCompletedDigits();
-        handler.publishChange(new SudokuChangedEvent(row, column, SudokuChangedEvent.Change.digitSet));
+        if (getValue(row, column) != 0) { // TODO geändert
+        	handler.publishChange(new SudokuChangedEvent(row, column, SudokuChangedEvent.Change.digitSet));
+        }
         autoRemove(row,column);
         return true;
     }
@@ -64,9 +66,17 @@ public class SudokuGrid {
     protected boolean removeDigit(int row, int column, Trigger trigger){
         if(cells[row][column].value == 0 || cells[row][column].isClue) return false;
         moves.add(new Move(MoveKind.removeDigit, row, column, cells[row][column].value, trigger));
+        int oldValue = cells[row][column].value;
         cells[row][column].value = 0;
-        updateCompletedDigits();
         handler.publishChange(new SudokuChangedEvent(row, column, SudokuChangedEvent.Change.digitRemoved));
+        Iterator<Cell> iterator = row(row);
+        while(iterator.hasNext()){addCandidate(iterator.next(), oldValue, Trigger.autoRemove);}
+        iterator = column(column);
+        while(iterator.hasNext()){addCandidate(iterator.next(), oldValue, Trigger.autoRemove);}
+        iterator = box((row / 3) * 3 + (column / 3));
+        while(iterator.hasNext()){addCandidate(iterator.next(), oldValue, Trigger.autoRemove);}
+        updatePencilmarks();
+        updateCompletedDigits();        
         return true;
     }
 
@@ -78,8 +88,13 @@ public class SudokuGrid {
         if(cells[row][column].candidates.get(candidate)) return false;
         moves.add(new Move(MoveKind.addCandidate, row, column, candidate, trigger));
         cells[row][column].candidates.set(candidate, true);
-        handler.publishChange(new SudokuChangedEvent(row, column, SudokuChangedEvent.Change.candidateAdded));
+        if (getValue(row, column) == 0) { // TODO geändert
+        	handler.publishChange(new SudokuChangedEvent(row, column, SudokuChangedEvent.Change.candidateAdded));
+        }
         return true;
+    }
+    protected boolean addCandidate(Cell cell, int value, Trigger trigger){
+        return addCandidate(cell.row, cell.column,value,trigger);
     }
 
     // returns true if it actually does something
@@ -90,7 +105,9 @@ public class SudokuGrid {
         if(!cells[row][column].candidates.get(candidate)) return false;
         moves.add(new Move(MoveKind.removeCandidate, row, column, candidate, trigger));
         cells[row][column].candidates.set(candidate, false);
-        handler.publishChange(new SudokuChangedEvent(row, column, SudokuChangedEvent.Change.candidateRemoved));
+        if (getValue(row, column) == 0) { // TODO geändert
+        	handler.publishChange(new SudokuChangedEvent(row, column, SudokuChangedEvent.Change.candidateRemoved));
+        }
         return true;
     }
 

@@ -1,82 +1,116 @@
 package ds.sudoku.gui.service;
 
+import ds.sudoku.communication.ACKMessage;
 import ds.sudoku.communication.DeathHandler;
+import ds.sudoku.communication.DeregisterMessage;
+import ds.sudoku.communication.ErrorMessage;
+import ds.sudoku.communication.GameOverMessage;
 import ds.sudoku.communication.InviteMessage;
+import ds.sudoku.communication.LeftMessage;
+import ds.sudoku.communication.Message;
+import ds.sudoku.communication.NACKMessage;
+import ds.sudoku.communication.NamedSetFieldMessage;
+import ds.sudoku.communication.NewGameMessage;
+import ds.sudoku.communication.RegisterMessage;
+import ds.sudoku.communication.ScoreMessage;
 import ds.sudoku.communication.Server;
 import ds.sudoku.communication.ServerFactory;
 import ds.sudoku.communication.ServerMessageHandler;
+import ds.sudoku.communication.SetFieldMessage;
 import ds.sudoku.logic.SudokuHandler;
 import ds.sudoku.logic.SudokuTemplate;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.widget.Toast;
 
 public class SudokuService extends Service implements Handler.Callback, DeathHandler<Server> {
 	
-	// make sure these don't clash with the SudokuHandler
-	protected static final int REGISTERED_MSG		= 0xFFFF0001;
-	protected static final int DEREGISTERED_MSG		= 0xFFFF0002;
-	protected static final int INVITED_MSG			= 0xFFFF0003;
-	protected static final int INVITE_REJECTED_MSG	= 0xFFFF0004;
-	protected static final int NEW_GAME_MSG			= 0xFFFF0005;
-	protected static final int ERROR_MSG			= 0xFFFF0006;
+	private static final int REGISTERED_MSG			= 1;
+	private static final int DEREGISTERED_MSG		= 2;
+	private static final int INVITED_MSG			= 3;
+	private static final int INVITE_REJECTED_MSG	= 4;
+	private static final int NEW_GAME_MSG			= 5;
+	private static final int ERROR_MSG				= 6;
 
-	private static Server server;
-	private static SudokuHandler sudokuHandler;
-	private static UserStateListener userStateListener;
-	private static String username;
+	private Server server;
+	private volatile SudokuHandler sudokuHandler;
+	private UserStateListener userStateListener;
+	private String username;
 	
-	public static final String SERVER_HOST = "sudoku.gebaschtel.ch";
+	//public static final String SERVER_HOST = "sudoku.gebaschtel.ch";
+	public static final String SERVER_HOST = "10.0.0.11";
 	public static final int SERVER_PORT = 8888;
 	
 	//////////// Public Methods for GUI  ////////////
 	
-	/**
-	 * This value is null if the service is not running.
-	 * 
-	 * @return Connected Server instance
-	 */
-	public static Server getServer() {
-		return server;
-	}
+	public class SudokuServerBinder extends Binder {
+		/**
+		 * This value is null if the service is not running.
+		 * 
+		 * @return Connected Server instance
+		 */
+		public Server getServer() {
+			return server;
+		}
+		
+		/**
+		 * This value is null if no game is running.
+		 * 
+		 * @return SudokuHandler for the current game
+		 */
+		public SudokuHandler getSudokuHandler() {
+			return sudokuHandler;
+		}
+		
+		/**
+		 * Checks if the client is registered.
+		 * 
+		 * @return true if the client is registered
+		 */
+		public boolean isRegistered() {
+			return username != null;
+		}
+		
+		/**
+		 * Gets the username if the client is registered.
+		 * 		
+		 * @return the username
+		 */
+		public String getUsername() {
+			return username;
+		}
+		
+		/**
+		 * Sets a listener for the MainActivity to get informed about
+		 * changes in the user state (e.g. invite requests)
+		 * 	
+		 * @param listener
+		 */
+		public void setUserStateListener(UserStateListener listener) {
+			userStateListener = listener;
+		}
+    }
 	
-	/**
-	 * This value is null if no game is running.
-	 * 
-	 * @return SudokuHandler for the current game
-	 */
-	public static SudokuHandler getSudokuHandler() {
-		return sudokuHandler;
-	}
-	
-	/**
-	 * Sets a listener for the MainActivity to get informed about
-	 * changes in the user state (e.g. invite requests)
-	 * 	
-	 * @param listener
-	 */
-	public static void setUserStateListener(UserStateListener listener) {
-		userStateListener = listener;
-	}
+
 	
 	/////////////////////////////////////////////////
-
-
+	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public IBinder onBind(Intent intent) {
 		try {
-			server = ServerFactory.create(SERVER_HOST, 8888);
-			ServerMessageHandler messageHandler = new SudokuServerMessageHandler(new Handler());
-			server.setMessageHandler(messageHandler);
-			server.setDeathHandler(this);
-			server.start();
+			if(server == null) {
+				server = ServerFactory.create(SERVER_HOST, 8888);
+				server.setMessageHandler(messageHandler);
+				server.setDeathHandler(this);
+				server.start();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return START_NOT_STICKY;
+		return sudokuServiceBinder;
 	}
 	
 	@Override
@@ -115,7 +149,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 			SudokuTemplate template = (SudokuTemplate) msg.obj;
 			sudokuHandler = new SudokuHandler(template, username);
 			if(userStateListener != null) {
-				userStateListener.onGameStarted();
+				userStateListener.onGameStarted(template);
 			}
 			return true;
 		}
@@ -125,17 +159,103 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 	@Override
 	public void onDeath(Server instance, String message) {
-		Toast.makeText(this, "Disconnected from server.", Toast.LENGTH_LONG);
 		if(userStateListener != null) {
 			userStateListener.onDeath(message);
 		}
 		this.stopSelf();
 	}
 	
+	private final IBinder sudokuServiceBinder = new SudokuServerBinder();
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+
+	
+	private final Handler serviceHandler = new Handler(this);
+	private final ServerMessageHandler messageHandler = new ServerMessageHandler() {
+
+		@Override
+		public void onRawMessageReceived(Server server, Message message) {
+			// ignore
+		}
+
+		@Override
+		public void onDeregisterMessageReceived(Server server,
+				DeregisterMessage message) {
+			// unused			
+		}
+
+		@Override
+		public void onLeftMessageReceived(Server server, LeftMessage message) {
+			// TODO send to sudoku handler 			
+		}
+
+		@Override
+		public void onSetFieldMessageReceived(Server server, SetFieldMessage message) {
+			// unused			
+		}
+
+		@Override
+		public void onNamedSetFieldMessageReceived(Server server, NamedSetFieldMessage message) {
+			if(sudokuHandler != null) {
+				sudokuHandler
+					.obtainMessage(SudokuHandler.ServerRequestSetDigit, message)
+					.sendToTarget();
+			}			
+		}
+
+		@Override
+		public void onErrorMesssageReceived(Server server, ErrorMessage message) {
+			// unused			
+		}
+
+		@Override
+		public void onInviteMessageReceived(Server server, InviteMessage message) {
+			serviceHandler.obtainMessage(INVITED_MSG, message).sendToTarget();			
+		}
+
+		@Override
+		public void onACKReceived(Server server, ACKMessage message) {
+			Message confirmed = message.getConfirmedMessage();
+			
+			if(confirmed instanceof RegisterMessage) {
+				serviceHandler
+					.obtainMessage(REGISTERED_MSG, ((RegisterMessage) confirmed).getName())
+					.sendToTarget();
+			} else if(confirmed instanceof DeregisterMessage) {
+				serviceHandler
+					.obtainMessage(DEREGISTERED_MSG, confirmed)
+					.sendToTarget();
+			}
+		}
+
+		@Override
+		public void onNACKReceived(Server server, NACKMessage message) {
+			Message confirmed = message.getConfirmedMessage();
+			if(confirmed instanceof InviteMessage) {
+				serviceHandler
+					.obtainMessage(INVITE_REJECTED_MSG, confirmed)
+					.sendToTarget();
+			}
+		}
+
+		@Override
+		public void onGameOverMessageReceived(Server server, GameOverMessage message) {
+			// TODO send to sudoku handler
+			
+		}
+
+		@Override
+		public void onScoreMessageReceived(Server server, ScoreMessage message) {
+			// TODO send to sudoku handler
+			
+		}
+
+		@Override
+		public void onNewGameMessageReceived(Server client,	NewGameMessage message) {
+			serviceHandler
+				.obtainMessage(NEW_GAME_MSG, message.getSudokuField())
+				.sendToTarget();			
+		}
+		
+	};
 
 }
