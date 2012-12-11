@@ -19,6 +19,7 @@ public class GameHandler implements Runnable {
 		actorThread = new Thread(this);
 
 		this.game = game;
+		score = new Scoring(game);
 		game.setHandler(this);
 	}
 	
