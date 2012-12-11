@@ -1,6 +1,7 @@
 package ds.sudoku.gui.service;
 
 import ds.sudoku.communication.InviteMessage;
+import ds.sudoku.logic.SudokuTemplate;
 
 public interface UserStateListener {
 	/**
@@ -33,8 +34,10 @@ public interface UserStateListener {
 	/**
 	 * Called when a new game was started. This method is
 	 * called after the SudokuHandler was created.
+	 * 
+	 * @param template 
 	 */
-	public void onGameStarted();
+	public void onGameStarted(SudokuTemplate template);
 	
 	/**
 	 * Called if the connection to the server got interuped.
