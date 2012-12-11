@@ -4,6 +4,8 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import ds.sudoku.communication.Server;
+
 /**
  * I am currently testing things on my computer and not on android, so I had to add a
  * few workaround classes to make it compatible.
@@ -18,7 +20,7 @@ public class SudokuHandler extends android.os.Handler implements SudokuInfo, Sud
     private List<SudokuChangeListener> listeners = new LinkedList<SudokuChangeListener>();
     private final SudokuGrid sudoku;
     public final String username;
-//    private Server server;
+    private Server server;
 
     public final static int GUIRequestSetDigit = 1;
     public final static int GUIRequestRemoveDigit = 2; //TODO:: was heisst das gnau im multiplayer kontext
@@ -29,10 +31,10 @@ public class SudokuHandler extends android.os.Handler implements SudokuInfo, Sud
 
     public final static int ServerRequestSetDigit = 7;
 
-    public SudokuHandler(SudokuTemplate template, String username) {
+    public SudokuHandler(SudokuTemplate template, String username, Server server) {
         sudoku = new SudokuGrid(template, this);
         this.username = username;
-//        this.server = server;
+        this.server = server;
     }
 
     public void addSudokuChangeListener(SudokuChangeListener listener) {
@@ -73,7 +75,7 @@ public class SudokuHandler extends android.os.Handler implements SudokuInfo, Sud
                 //System.out.println("sudoku: set digit " + cell.digit + " at " + cell.row + "/" + cell.column);
                 sudoku.setDigit(cell, SudokuGrid.Trigger.user);
                 //System.out.println("\t digit at " + cell.row + "/" + cell.column + " is now " + sudoku.getValue(cell.row,cell.column));
-//                server.setField(cell.row, cell.column, cell.digit);
+                server.setField(cell.row+1, cell.column+1, cell.digit);
                 break;
             }
             case GUIRequestRemoveDigit: {
@@ -116,6 +118,9 @@ public class SudokuHandler extends android.os.Handler implements SudokuInfo, Sud
 
             case ServerRequestSetDigit: {
                 ServerSetFieldInfo info = (ServerSetFieldInfo) msg.obj;
+                CellInfo cinfo = new CellInfo(info.row-1, info.column-1, info.value);
+                sudoku.setDigit(cinfo, SudokuGrid.Trigger.user);
+
                 //System.out.println("received Instruction from Server to set " + info.value + " at " + info.row + "/" + info.column);
                 break;
             }

@@ -17,6 +17,7 @@ import ds.sudoku.communication.Server;
 import ds.sudoku.communication.ServerFactory;
 import ds.sudoku.communication.ServerMessageHandler;
 import ds.sudoku.communication.SetFieldMessage;
+import ds.sudoku.logic.ServerSetFieldInfo;
 import ds.sudoku.logic.SudokuHandler;
 import ds.sudoku.logic.SudokuTemplate;
 import android.app.Service;
@@ -147,7 +148,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 			return true;
 		case NEW_GAME_MSG:
 			SudokuTemplate template = (SudokuTemplate) msg.obj;
-			sudokuHandler = new SudokuHandler(template, username);
+			sudokuHandler = new SudokuHandler(template, username, server);
 			if(userStateListener != null) {
 				userStateListener.onGameStarted(template);
 			}
@@ -196,10 +197,16 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 		@Override
 		public void onNamedSetFieldMessageReceived(Server server, NamedSetFieldMessage message) {
 			if(sudokuHandler != null) {
+				// TODO: change this to message
+				
+				ServerSetFieldInfo info = new ServerSetFieldInfo(
+						 message.getRow(), message.getColumn(), 
+						 message.getValue(), message.getSender());
+				
 				sudokuHandler
-					.obtainMessage(SudokuHandler.ServerRequestSetDigit, message)
+					.obtainMessage(SudokuHandler.ServerRequestSetDigit, info)
 					.sendToTarget();
-			}			
+			}
 		}
 
 		@Override
