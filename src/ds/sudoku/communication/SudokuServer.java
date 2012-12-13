@@ -214,18 +214,10 @@ public class SudokuServer implements Server {
                                     SudokuServer.this, message);
                         }
                         // InviteDirect
-                        else if (messageType.equals(InviteDirectMessage.class
+                        else if (messageType.equals(InviteMessage.class
                                 .getName())) {
-                            InviteDirectMessage message = json.fromJson(
-                                    parsedLine, InviteDirectMessage.class);
-                            messageHandler.onInviteMessageReceived(
-                                    SudokuServer.this, message);
-                        }
-                        // InviteRandom
-                        else if (messageType.equals(InviteRandomMessage.class
-                                .getName())) {
-                            InviteRandomMessage message = json.fromJson(
-                                    parsedLine, InviteRandomMessage.class);
+                            InviteMessage message = json.fromJson(
+                                    parsedLine, InviteMessage.class);
                             messageHandler.onInviteMessageReceived(
                                     SudokuServer.this, message);
                         }
@@ -446,16 +438,26 @@ public class SudokuServer implements Server {
      * {@inheritDoc Server#invite(String)}
      */
     @Override
-    public void invite(String invited) {
-        throw new NotImplementedException();
+    public void invite(String name, String difficulty) {
+        // Generate the message
+        InviteMessage message = new InviteMessage(name, difficulty);
+        // Lock the queue and add the message
+        synchronized (outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
     }
 
     /**
      * {@inheritDoc Server#requestRandomMatch()}
      */
     @Override
-    public void requestRandomMatch() {
-        throw new NotImplementedException();
+    public void requestRandomMatch(String difficulty) {
+        // Generate the message
+        InviteRandomMessage message = new InviteRandomMessage(difficulty);
+        // Lock the queue and add the message
+        synchronized (outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
     }
 
     /**

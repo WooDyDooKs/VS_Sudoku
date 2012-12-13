@@ -12,7 +12,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import ds.sudoku.communication.InviteDirectMessage;
+import ds.sudoku.communication.InviteMessage;
 import ds.sudoku.communication.InviteRandomMessage;
 
 /**
@@ -26,8 +26,7 @@ public class InviteRandomMessageAdapter extends MessageSerializer implements
         JsonDeserializer<InviteRandomMessage> {
 
     /**
-     * Deserialize the given {@link JsonElement} to a
-     * {@link InviteDirectMessage}.
+     * Deserialize the given {@link JsonElement} to a {@link InviteMessage}.
      * 
      * @param jsonMessage
      *            The input for de-serialization.
@@ -49,15 +48,16 @@ public class InviteRandomMessageAdapter extends MessageSerializer implements
         List<String> customValues = extractCustomValues(jsonMessageObject);
         Map<String, String> customProperties = extractCustomProperties(jsonMessageObject);
 
-        // Extract the inviter
-        String inviter = null;
-        if (jsonMessageObject.has(SerializationKeys.INVITER)) {
-            JsonElement inviterElement = jsonMessageObject
-                    .get(SerializationKeys.INVITER);
-            inviter = inviterElement.getAsString();
+        // Extract difficulty
+        String difficulty = null;
+        if (jsonMessageObject.has(SerializationKeys.DIFFICULTY_KEY)) {
+            JsonElement difficultyElement = jsonMessageObject
+                    .get(SerializationKeys.DIFFICULTY_KEY);
+            difficulty = difficultyElement.getAsString();
         }
-        
-        return new InviteRandomMessage(inviter, customValues, customProperties);
+
+        return new InviteRandomMessage(difficulty, customValues,
+                customProperties);
     }
 
     /**
@@ -79,10 +79,11 @@ public class InviteRandomMessageAdapter extends MessageSerializer implements
                 .serialize(message, type, context);
         JsonObject jsonMessageObject = jsonMessageElement.getAsJsonObject();
 
-        // Add the inviting participant
-        final String inviter = message.getInviter();
-        if (inviter != null) {
-            jsonMessageObject.addProperty(SerializationKeys.INVITER, inviter);
+        // Serialize the difficulty
+        final String difficulty = message.getDifficulty();
+        if (difficulty != null) {
+            jsonMessageObject.addProperty(SerializationKeys.DIFFICULTY_KEY,
+                    difficulty);
         }
 
         return jsonMessageObject;

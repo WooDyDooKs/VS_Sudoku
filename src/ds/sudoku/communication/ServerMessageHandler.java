@@ -53,25 +53,11 @@ public interface ServerMessageHandler {
      * @param server
      *            The {@link Server} who sent the message.
      * @param message
-     *            The {@link InviteDirectMessage} generated from the incoming
+     *            The {@link InviteMessage} generated from the incoming
      *            data.
      */
     public void onInviteMessageReceived(Server server,
-            InviteDirectMessage message);
-
-    /**
-     * Will be invoked when a new invitation from a random invite is received.
-     * The designated sender did not directly invite the client, however the
-     * server decided to arrange the matchup.
-     * 
-     * @param server
-     *            The {@link Server} who sent the message.
-     * @param message
-     *            The {@link InviteDirectMessage} generated from the incoming
-     *            data.
-     */
-    public void onInviteMessageReceived(Server server,
-            InviteRandomMessage message);
+            InviteMessage message);
 
     /**
      * Will be invoked when a new set field message from the server is received.

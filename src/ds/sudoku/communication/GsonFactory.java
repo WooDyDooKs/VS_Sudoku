@@ -7,7 +7,7 @@ import ds.sudoku.communication.serialization.ACKMessageAdapter;
 import ds.sudoku.communication.serialization.DeregisterMessageAdapter;
 import ds.sudoku.communication.serialization.ErrorMessageAdapter;
 import ds.sudoku.communication.serialization.GameOverMessageAdapter;
-import ds.sudoku.communication.serialization.InviteDirectMessageAdapter;
+import ds.sudoku.communication.serialization.InviteMessageAdapter;
 import ds.sudoku.communication.serialization.InviteRandomMessageAdapter;
 import ds.sudoku.communication.serialization.LeaveMessageAdapter;
 import ds.sudoku.communication.serialization.LeftMessageAdapter;
@@ -66,8 +66,8 @@ public enum GsonFactory {
                 new NewGameMessageAdapter());
         gsonBuilder.registerTypeAdapter(LeaveMessage.class,
                 new LeaveMessageAdapter());
-        gsonBuilder.registerTypeAdapter(InviteDirectMessage.class,
-                new InviteDirectMessageAdapter());
+        gsonBuilder.registerTypeAdapter(InviteMessage.class,
+                new InviteMessageAdapter());
         gsonBuilder.registerTypeAdapter(InviteRandomMessage.class,
                 new InviteRandomMessageAdapter());
         gsonBuilder.registerTypeAdapter(Message.class, new RawMessageAdapter());

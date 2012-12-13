@@ -69,8 +69,10 @@ public interface Server extends Connection, SudokuParticipant {
      * 
      * @param invited
      *            The player being invited.
+     * @param difficulty
+     *            The desired difficulty of the sudoku game.
      */
-    public void invite(String invited);
+    public void invite(String invited, String difficulty);
 
     /**
      * Sends the server a request for a random match. After calling this method,
@@ -78,8 +80,11 @@ public interface Server extends Connection, SudokuParticipant {
      * after the ACK, the client shouldw ait for a NewGame message containing
      * information about the game. Instead of an ACK message, you can receive a
      * NACK message, indicating that no player was found for you request.
+     * 
+     * @param difficulty
+     *            The desired difficulty of the sudoku game.
      */
-    public void requestRandomMatch();
+    public void requestRandomMatch(String difficulty);
 
     /**
      * Sends the server a leave message, indicating that you left the current

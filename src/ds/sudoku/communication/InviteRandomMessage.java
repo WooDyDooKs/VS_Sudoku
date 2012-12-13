@@ -5,43 +5,44 @@ import java.util.Map;
 
 public class InviteRandomMessage extends Message {
 
-    private final String inviter;
-
+    private final String difficulty;
+    
     /**
      * Creates a new {@link InviteRandomMessage} which represents a request for
-     * a random match from the {@code inviter} to the server.
+     * a random match with the given difficulty.
      * 
-     * @param inviter
-     *            The participant requesting a random match.
+     * @param difficulty
+     *            The desired difficulty of the random game.
      */
-    public InviteRandomMessage(final String inviter) {
-        this.inviter = inviter;
+    public InviteRandomMessage(String difficulty) {
+        super();
+        this.difficulty = difficulty;
     }
 
     /**
      * Creates a new {@link InviteRandomMessage} which represents a request for
-     * a random match from the {@code inviter} to the server. Additionally, store
+     * a random match with the given difficulty. Additionally, store
      * custom values and properties and send them with this message.
      * 
-     * @param inviter
-     *            The participant requesting a random match.
+     * @param difficulty
+     *            The desired difficulty of the random game.
      * @param customValues
      *            The custom values stored in this message.
      * @param customProperties
      *            The custom properties stored in this message.
      */
-    public InviteRandomMessage(final String inviter,
+    public InviteRandomMessage( String difficulty,
             final List<String> customValues,
             final Map<String, String> customProperties) {
         super(customValues, customProperties);
-        this.inviter = inviter;
-    }
-
+        this.difficulty = difficulty;
+    }   
+    
     /**
-     * Get the participant sending the request.
-     * @return The inviter.
+     * Get the difficulty associated with this invitation.
+     * @return The requested difficulty of the match.
      */
-    public String getInviter() {
-        return inviter;
-    }    
+    public String getDifficulty() {
+        return difficulty;
+    }
 }

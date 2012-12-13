@@ -12,21 +12,19 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import ds.sudoku.communication.InviteDirectMessage;
+import ds.sudoku.communication.InviteMessage;
 
 /**
- * A json adapter used to serialize and deserialize {@link InviteDirectMessage}.
+ * A json adapter used to serialize and deserialize {@link InviteMessage}.
  * 
  * @author dalhai
  * 
  */
-public class InviteDirectMessageAdapter extends MessageSerializer implements
-        JsonDeserializer<InviteDirectMessage>,
-        JsonSerializer<InviteDirectMessage> {
+public class InviteMessageAdapter extends MessageSerializer implements
+        JsonDeserializer<InviteMessage>, JsonSerializer<InviteMessage> {
 
     /**
-     * Deserialize the given {@link JsonElement} to a
-     * {@link InviteDirectMessage}.
+     * Deserialize the given {@link JsonElement} to a {@link InviteMessage}.
      * 
      * @param jsonMessage
      *            The input for de-serialization.
@@ -37,10 +35,10 @@ public class InviteDirectMessageAdapter extends MessageSerializer implements
      * @return A new LeaveMessage built from the input.
      * @throws JsonParseException
      *             Thrown, if the given input does not provide the structure
-     *             needed by a {@link InviteDirectMessage}
+     *             needed by a {@link InviteMessage}
      */
     @Override
-    public InviteDirectMessage deserialize(JsonElement jsonMessage, Type type,
+    public InviteMessage deserialize(JsonElement jsonMessage, Type type,
             JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonMessageObject = jsonMessage.getAsJsonObject();
 
@@ -48,28 +46,27 @@ public class InviteDirectMessageAdapter extends MessageSerializer implements
         List<String> customValues = extractCustomValues(jsonMessageObject);
         Map<String, String> customProperties = extractCustomProperties(jsonMessageObject);
 
-        // Extract the inviter
-        String inviter = null;
-        if (jsonMessageObject.has(SerializationKeys.INVITER)) {
-            JsonElement inviterElement = jsonMessageObject
-                    .get(SerializationKeys.INVITER);
-            inviter = inviterElement.getAsString();
+        // Extract the name
+        String name = null;
+        if (jsonMessageObject.has(SerializationKeys.NAME_KEY)) {
+            JsonElement nameElement = jsonMessageObject
+                    .get(SerializationKeys.NAME_KEY);
+            name = nameElement.getAsString();
         }
 
-        // Extract the invited
-        String invited = null;
-        if (jsonMessageObject.has(SerializationKeys.INVITED)) {
-            JsonElement invitedElement = jsonMessageObject
-                    .get(SerializationKeys.INVITED);
-            invited = invitedElement.getAsString();
+        // Extract the difficulty
+        String difficulty = null;
+        if (jsonMessageObject.has(SerializationKeys.DIFFICULTY_KEY)) {
+            JsonElement difficultyElement = jsonMessageObject
+                    .get(SerializationKeys.DIFFICULTY_KEY);
+            difficulty = difficultyElement.getAsString();
         }
-        
-        return new InviteDirectMessage(inviter, invited, customValues, customProperties);
+
+        return new InviteMessage(name, difficulty, customValues, customProperties);
     }
 
     /**
-     * Serialize the given {@link InviteDirectMessage} into a
-     * {@link JsonElement}.
+     * Serialize the given {@link InviteMessage} into a {@link JsonElement}.
      * 
      * @param message
      *            The message to be serialized.
@@ -80,22 +77,22 @@ public class InviteDirectMessageAdapter extends MessageSerializer implements
      * @return A new JsonElement representing the message.
      */
     @Override
-    public JsonElement serialize(InviteDirectMessage message, Type type,
+    public JsonElement serialize(InviteMessage message, Type type,
             JsonSerializationContext context) {
         JsonElement jsonMessageElement = super
                 .serialize(message, type, context);
         JsonObject jsonMessageObject = jsonMessageElement.getAsJsonObject();
 
-        // Add the inviting participant
-        final String inviter = message.getInviter();
-        if (inviter != null) {
-            jsonMessageObject.addProperty(SerializationKeys.INVITER, inviter);
+        // Add the name
+        final String name = message.getName();
+        if (name != null) {
+            jsonMessageObject.addProperty(SerializationKeys.NAME_KEY, name);
         }
-
-        // Add the invited participant
-        final String invited = message.getInvited();
-        if (invited != null) {
-            jsonMessageObject.addProperty(SerializationKeys.INVITED, invited);
+        
+        // Add the difficulty
+        final String difficulty = message.getDifficulty();
+        if(difficulty != null) {
+            jsonMessageObject.addProperty(SerializationKeys.DIFFICULTY_KEY, difficulty);
         }
 
         return jsonMessageObject;

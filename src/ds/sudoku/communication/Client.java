@@ -30,15 +30,17 @@ public interface Client extends Connection, SudokuParticipant {
     public void deregister();
 
     /**
-     * Sends the client an invitation to a sudoku from the {@code otherPlayer}.
-     * This message should only be invoked when a game is started by inviting
-     * another player by name. It should not be used when matching players to a
-     * random (quick) match.
+     * Sends the client an invitation to a sudoku from the {@code inviter}. This
+     * message should only be invoked when a game is started by inviting another
+     * player by name. It should not be used when matching players to a random
+     * (quick) match.
      * 
-     * @param otherPlayer
+     * @param inviter
      *            name of the player who sent the invite.
+     * @param difficulty
+     *            difficulty of the game associated with the invitaiton.
      */
-    public void invite(String otherPlayer);
+    public void invite(String inviter, String difficulty);
 
     /**
      * Sends the client a message about the player with name {@code otherPlayer}

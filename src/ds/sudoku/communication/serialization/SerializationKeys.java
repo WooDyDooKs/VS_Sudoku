@@ -116,14 +116,8 @@ public final class SerializationKeys {
     public static final String CONFIRMED_MESSAGE_KEY = "Confirmed";
 
     /**
-     * This String will be used as the key for a property describing the
-     * inviter in an invitation message.
+     * This String will beu sed as the key for a property describing
+     * the difficulty of a sudoku game.
      */
-    public static final String INVITER = "Inviter";
-
-    /**
-     * This String will be used as the key for a property describing the
-     * target of an invitation.
-     */
-    public static final String INVITED = null;
+    public static final String DIFFICULTY_KEY = "Difficulty";
 }
