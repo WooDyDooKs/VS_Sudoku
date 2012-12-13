@@ -10,8 +10,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
