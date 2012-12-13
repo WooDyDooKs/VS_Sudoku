@@ -48,6 +48,10 @@ public class GameHandler implements Runnable {
 	public synchronized void playerLeft(User user) {
 		game.removeActivePlayer(user);
 		
+		for(User player : game.getActivePlayers()) {
+			player.getClient().playerLeft(user.getUsername());
+		}
+		
 		if(game.getActivePlayers().isEmpty()) {
 			try {
 				actorThread.interrupt();
@@ -122,7 +126,7 @@ public class GameHandler implements Runnable {
 		if(!(
 				row    >= 1 && row    <= 9 && 
 				column >= 1 && column <= 9 &&
-				value  >= 1 && value  <= 9
+				value  >= 0 && value  <= 9 // value = 0 indicates a removal
 		)) {
 			return false;
 		}

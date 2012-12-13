@@ -21,23 +21,49 @@ public class Scoring {
 		int newValue = gameMove.getValue();
 		int oldValue = game.getField(row, column);
 		int solutionValue = game.getSolution().getField(row, column);
+		
 		if ( oldValue != newValue ){
+			
 			if ( newValue == solutionValue ){
 				
 				int scoreNewUser = scoreTable.get(newUser);
 				scoreNewUser += 1;
 				scoreTable.put(newUser, scoreNewUser);
-				
+								
 				if ( oldValue != 0 ){
 					scoreNewUser += 1;
 					scoreTable.put(newUser, scoreNewUser);
+					
 					String oldUser = game.getUser(row, column);
 					int scoreOldUser = scoreTable.get(oldUser);
 					scoreOldUser -= 3;
 					scoreTable.put(oldUser, scoreOldUser);
 				}
+				
+			} else if(newValue == 0) {
+				// removal
+
+				if(oldValue != 0) {
+					String oldUser = game.getUser(row, column);
+					
+					if(oldUser.equals(newUser)) {
+						// we only remove own values
+						
+						int scoreNewUser = scoreTable.get(newUser);
+						scoreNewUser -= 1;
+						scoreTable.put(newUser, scoreNewUser);
+					}
+				}
 			} else {
+				// newValue != solutionValue
+				
+				int scoreNewUser = scoreTable.get(newUser);
+				scoreNewUser += 1;
+				scoreTable.put(newUser, scoreNewUser);
+				
 				if ( oldValue != solutionValue && oldValue != 0 ){
+					// wrong correction of wrong value
+					
 					String oldUser = game.getUser(row, column);
 					int scoreOldUser = scoreTable.get(oldUser);
 					scoreOldUser -= 3;
