@@ -5,15 +5,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import ds.sudoku.server.SudokuSolution.Difficulty;
+
 public class GamesManager {
 	
 	private Queue<User> idleUsers = new LinkedList<User>();
 	
-	public synchronized void startNewGame(User p1, User p2) {
-		SudokuSolution solution = SudokuSolution.getRandomSolution();
+	public synchronized void startNewGame(User p1, User p2, String difficulty) {
+		SudokuSolution solution = SudokuSolution.getRandomSolution(Difficulty.fromString(difficulty));	
 		List<User> players = Arrays.asList(p1, p2);
 		Game game = new Game(solution, players);
-		
+				
 		p1.setGame(game);
 		p2.setGame(game);
 		

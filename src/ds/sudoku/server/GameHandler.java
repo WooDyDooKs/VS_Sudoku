@@ -103,12 +103,21 @@ public class GameHandler implements Runnable {
 				Client client = user.getClient();
 				
 				client.score(user == leadingUser);
-				client.setField(nextMove.getRow(), nextMove.getColumn(), nextMove.getValue(), user.getUsername());
-				
+				client.setField(
+						nextMove.getRow(), 
+						nextMove.getColumn(), 
+						nextMove.getValue(), 
+						user.getUsername());
+	
 				if(gameOver) {
 					client.gameOver(leadingUsername, score.getScoreTable());
 				}
 			}
+			
+			ServerLog.l(
+					"Game Score for %s : %s", 
+					game.getID(), 
+					score.getScoreTable().toString());
 			
 			if(gameOver) {
 				game.destroy();

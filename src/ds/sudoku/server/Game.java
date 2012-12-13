@@ -61,6 +61,11 @@ public class Game {
 				this.cells.insert(cell);
 			}
 		}
+		
+		ServerLog.l(
+				"Created game id: %s, solution id: %d, players: %s",
+				gameID, solution.getSolutionID(), initialPlayers.toString());
+
 	}
 	
 	private BasicDBObject createCellDBObject(int row, int col) {
@@ -93,8 +98,14 @@ public class Game {
 	public GameHandler getHandler() {
 		return handler;
 	}
+	
+	public String getID() {
+		return gameID;
+	}
 
 	public void destroy() {
+		ServerLog.l("Destroying game id: %s", gameID);
+		
 		for(User p : initialPlayers) {
 			p.setGame(null);
 		}

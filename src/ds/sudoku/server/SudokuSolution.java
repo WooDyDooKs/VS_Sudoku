@@ -25,6 +25,10 @@ public class SudokuSolution {
 		public String toString() {
 			return this.difficulty;
 		}
+		
+		public static Difficulty fromString(String difficulty) {
+			return valueOf(difficulty.toUpperCase().replace(' ', '_'));
+		}
 	}
 	
 	private int solutionID;

@@ -60,12 +60,15 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 		ServerLog.l("User %s requested random match.", user.getUsername());
 
 		if(other != null) {
-			gamesManager.startNewGame(user, other);
+			// TODO: search by difficulty
+			gamesManager.startNewGame(user, other, message.getDifficulty());
 		}
 	}
 
 	@Override
 	public void onLeaveMessageReceived(Client client, LeaveMessage message) {
+		if(user.getGame() == null) return;
+		
 		GameHandler handler = user.getGame().getHandler();
 		handler.playerLeft(user);
 		ServerLog.l("User %s has left the game.", user.getUsername());
@@ -74,6 +77,7 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 	@Override
 	public void onSetFieldMessageReceived(Client client, SetFieldMessage message) {
 		assert !message.isZeroBased() : "zero based index not supported!";
+		if(user.getGame() == null) return;
 		
 		GameHandler handler = user.getGame().getHandler();
 		
@@ -94,7 +98,7 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 		if(ackMsg instanceof InviteMessage) {
 			InviteMessage invMsg = (InviteMessage) ackMsg;
 			User other = userManagement.getUser(invMsg.getName());
-			gamesManager.startNewGame(user, other);
+			gamesManager.startNewGame(user, other, invMsg.getDifficulty());
 			
 			ServerLog.l("Starting new game with players %s and %s", user.getUsername(), other.getUsername());
 		}

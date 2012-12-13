@@ -35,4 +35,9 @@ public class User {
 		return game;
 	}
 	
+	@Override
+	public String toString() {
+		return username;
+	}
+	
 }
