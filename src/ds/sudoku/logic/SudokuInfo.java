@@ -11,6 +11,9 @@ public interface SudokuInfo{
      */
     public int getValue(int row, int column);
 
+    public boolean setByUser(int row,int column);
+
+    public boolean isClue(int row, int column);
     /**
      *
      * @param row
@@ -19,7 +22,6 @@ public interface SudokuInfo{
      * for digit d just use get(d). (s nullte bit wird verschwändet.. :))
      */
     public BitSet getCandidates(int row, int column);
-    //TODO: String[] mit no verfüegbare kandidate oder "" falls nöd verfüegbar
     public String[] getCandidatesString(int row, int column);
 
     /**

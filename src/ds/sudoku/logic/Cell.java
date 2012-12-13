@@ -8,6 +8,7 @@ public class Cell {
     int value = 0;
     BitSet candidates ;
     final boolean isClue;
+    boolean setByUser = false;
 
     public Cell (int row, int column, int value, boolean isClue){
         this.row = row;

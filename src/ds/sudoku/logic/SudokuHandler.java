@@ -1,12 +1,11 @@
 package ds.sudoku.logic;
 
-import ds.sudoku.logic.android_workaround.Handler;  // TODO: Change to android Handler
-import ds.sudoku.logic.android_workaround.Message; // TODO: Change to android Message
-import ds.sudoku.logic.android_workaround.Server;  // TODO: Change to communication.Server
-
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
+
+//import ds.sudoku.communication.Server;
+import ds.sudoku.logic.android_workaround.*;
 
 /**
  * I am currently testing things on my computer and not on android, so I had to add a
@@ -32,6 +31,9 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
     public final static int GUIRequestUndo = 6;
 
     public final static int ServerRequestSetDigit = 7;
+    public final static int ServerInfoLeaderChanged = 8;
+    public final static int ServerInfoGameFinished = 9;
+    public final static int ServerInfoPlayerLeft = 11;
 
     public SudokuHandler(SudokuTemplate template, String username, Server server) {
         sudoku = new SudokuGrid(template, this);
@@ -39,39 +41,40 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
         this.server = server;
     }
 
-
-    @Override
     public void addSudokuChangeListener(SudokuChangeListener listener) {
         listeners.add(listener);
     }
 
-    @Override
     public int getValue(int row, int column) {
-        return sudoku.getValue(row - 1,column -1);
+        return sudoku.getValue(row - 1, column - 1);
     }
 
     @Override
+    public boolean isClue(int row, int column) {
+        return sudoku.isClue(row-1,column-1);
+    }
+
     public BitSet getCandidates(int row, int column) {
         return sudoku.getCandidates(row - 1,column - 1);
     }
 
-    @Override
     public String[] getCandidatesString(int row, int column) {
-        //return sudoku.getCandidates(row - 1,column - 1);
-        String[] candidates = new String[9];
+        String[] candidates = new String[10];
         for(int i = 1; i <= 9; i++){
            if(sudoku.getCandidates(row -1, column -1).get(i)) candidates[i] = Integer.toString(i);
-           else candidates[i] = "";
+           else candidates[i] = " ";
         }
         return candidates;
     }
 
-    @Override
     public boolean showCandidates(int row, int column) {
         return sudoku.getValue(row - 1,column - 1) == 0;
     }
 
-    @Override
+    public boolean setByUser(int row,int column){
+        return sudoku.setByUser(row -1, column -1);
+    }
+
     public boolean isDigitCompleted(int digit) {
         return sudoku.isDigitCompleted(digit);
     }
@@ -81,9 +84,9 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
         switch(msg.what) {
             case GUIRequestSetDigit: {
                 CellInfo cell = (CellInfo) msg.obj;
-                cell.row--;cell.column--;
+                //cell.row--;cell.column--;
                 //System.out.println("sudoku: set digit " + cell.digit + " at " + cell.row + "/" + cell.column);
-                sudoku.setDigit(cell, SudokuGrid.Trigger.user);
+                //sudoku.setDigit(cell, SudokuGrid.Trigger.user);
                 //System.out.println("\t digit at " + cell.row + "/" + cell.column + " is now " + sudoku.getValue(cell.row,cell.column));
                 server.setField(cell.row, cell.column, cell.digit);
                 break;
@@ -121,14 +124,40 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
                 break;
             }
 
-            case GUIRequestUndo: {
-                sudoku.undo();
+            case ServerRequestSetDigit: {
+                NamedSetFieldMessage info = (NamedSetFieldMessage) msg.obj;
+                System.out.println("acho im richtige case und cast isch ok");
+                SudokuGrid.Trigger trigger = null;
+                if(info.getSender().equals(username))  trigger = SudokuGrid.Trigger.user;
+                else trigger = SudokuGrid.Trigger.otherUser;
+                sudoku.setDigit(info.getRow() - 1,info.getColumn() - 1, info.getValue(), trigger);
+                System.out.println("received Instruction from Server to set " + info.getValue() + " at " + info.getRow() + "/" + info.getColumn());
                 break;
             }
 
-            case ServerRequestSetDigit: {
-                ServerSetFieldInfo info = (ServerSetFieldInfo) msg.obj;
-                //System.out.println("received Instruction from Server to set " + info.value + " at " + info.row + "/" + info.column);
+            case ServerInfoLeaderChanged: {
+                ScoreMessage info = (ScoreMessage) msg.obj;
+                for(SudokuChangeListener listener : listeners) {
+                    listener.onLeaderChanged(info.isWinning());
+                }
+                break;
+            }
+
+            case ServerInfoGameFinished: {
+                GameOverMessage info = (GameOverMessage) msg.obj;
+                for(SudokuChangeListener listener : listeners) {
+                    //TODO: bruche no de score ide gameOver message
+                    listener.onGameFinished(info.getName(),0);
+                }
+                break;
+            }
+
+            case ServerInfoPlayerLeft: {
+                LeaveMessage info = (LeaveMessage) msg.obj;
+                for(SudokuChangeListener listener : listeners) {
+                    //TODO:
+                    //listener.onPlayerLeavesGame(info.);
+                }
                 break;
             }
 
