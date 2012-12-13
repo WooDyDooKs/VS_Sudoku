@@ -19,6 +19,7 @@ public class LeaveMessageAdapter extends MessageSerializer implements
 
     /**
      * Deserialize the given {@link JsonElement} to a {@link LeaveMessage}.
+     * 
      * @param jsonMessage
      *            The input for de-serialization.
      * @param type
@@ -45,9 +46,13 @@ public class LeaveMessageAdapter extends MessageSerializer implements
 
     /**
      * Serialize the given {@link LeaveMessage} into a {@link JsonElement}.
-     * @param message The message to be serialized.
-     * @param type The type used for serialization.
-     * @param context The context of the serialization.
+     * 
+     * @param message
+     *            The message to be serialized.
+     * @param type
+     *            The type used for serialization.
+     * @param context
+     *            The context of the serialization.
      * @return A new JsonElement representing the message.
      */
     @Override
