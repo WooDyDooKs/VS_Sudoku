@@ -18,7 +18,7 @@
 		<link>
 			<name>src</name>
 			<type>2</type>
-			<location>PARENT-2-PROJECT_LOC/src</location>
+			<locationURI>PARENT-2-PROJECT_LOC/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
