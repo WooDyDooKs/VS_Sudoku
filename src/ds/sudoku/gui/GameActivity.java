@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 
 public class GameActivity extends Activity {
+
 	GridView gv_sudoku, gv_numPad;
 	TextView[] cells;
 	
@@ -59,11 +60,12 @@ public class GameActivity extends Activity {
 	
 	////LOGIC
 	SudokuHandler sudoku;
+	SudokuServerBinder sudokuService;
 	
     private ServiceConnection serviceConnection = new ServiceConnection() {	
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			SudokuServerBinder sudokuService = (SudokuServerBinder) service;
+			sudokuService = (SudokuServerBinder) service;
 			sudoku = sudokuService.getSudokuHandler();
 			if(sudoku == null) {
 				finish();
@@ -75,6 +77,7 @@ public class GameActivity extends Activity {
 		}
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
+			sudokuService = null;
 			sudoku = null;
 			finish();
 		}
@@ -151,7 +154,7 @@ public class GameActivity extends Activity {
 	};;
 	
 	
-	//wenn man digit löscht sollen alle pm in zeile, spalte und kasten geupdatet werden
+	//wenn man digit lï¿½scht sollen alle pm in zeile, spalte und kasten geupdatet werden
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -253,6 +256,9 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if(sudokuService != null) {
+			sudokuService.getServer().leave();
+		}
 		unbindService(serviceConnection);
 	}
     
@@ -279,7 +285,7 @@ public class GameActivity extends Activity {
 		}
 	}
     
-    //wandelt boolean array der pencilmarks in string um -> string array wäre besser!!!
+    //wandelt boolean array der pencilmarks in string um -> string array wï¿½re besser!!!
     public String pmToString(String[] pms) {
     	StringBuilder sb = new StringBuilder();		
 		sb.append(pms[1]+"  ");

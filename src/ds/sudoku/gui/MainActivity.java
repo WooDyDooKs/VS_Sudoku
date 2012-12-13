@@ -304,7 +304,11 @@ public class MainActivity extends Activity {
     	progressBar.setVisibility(View.VISIBLE);
     	
     	// find Player
-	    sudokuService.getServer().invite(opponentUsername, "medium");
+    	if(opponentUsername.isEmpty()) {
+    		sudokuService.getServer().requestRandomMatch("medium");
+    	} else {
+    		sudokuService.getServer().invite(opponentUsername, "medium");
+    	}
     }
     
     enum SpModi {
