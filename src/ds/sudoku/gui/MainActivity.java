@@ -224,7 +224,7 @@ public class MainActivity extends Activity {
 		@Override
 		public void onInviteRequest(InviteMessage msg) {
 	        textView_invite.setVisibility(View.VISIBLE);
-	        textView_invite.setText(msg.getSender() + " invites you for an epic battle!");
+	        textView_invite.setText(msg.getName() + " invites you for an epic battle!");
 	        button_accept.setVisibility(View.VISIBLE);
 	        button_accept.setEnabled(true);
 	        button_decline.setVisibility(View.VISIBLE);
@@ -262,7 +262,13 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public void onDeath(String message) {
-									
+			Toast.makeText(MainActivity.this, "Disconnected.", Toast.LENGTH_LONG);
+			finish();
+		}
+
+		@Override
+		public void onError(String message) {
+			Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG);		
 		}
 	};
     
@@ -298,7 +304,7 @@ public class MainActivity extends Activity {
     	progressBar.setVisibility(View.VISIBLE);
     	
     	// find Player
-	    sudokuService.getServer().invite(opponentUsername);
+	    sudokuService.getServer().invite(opponentUsername, "medium");
     }
     
     enum SpModi {

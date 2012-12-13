@@ -47,18 +47,21 @@ public final class R {
         public static final int sudokugrid=0x7f02001c;
     }
     public static final class id {
+        public static final int button_accept=0x7f08000c;
+        public static final int button_decline=0x7f08000b;
         public static final int button_register=0x7f080003;
         public static final int button_search=0x7f080009;
         public static final int editText_register=0x7f080002;
         public static final int editText_search=0x7f080008;
         public static final int masterSudoku=0x7f080000;
-        public static final int menu_settings=0x7f08000b;
+        public static final int menu_settings=0x7f08000e;
         public static final int numPad=0x7f080001;
         public static final int progressBar=0x7f08000a;
         public static final int radioGroup=0x7f080004;
         public static final int radio_multiplayer=0x7f080006;
         public static final int radio_singleplayer=0x7f080005;
         public static final int spinner_modi=0x7f080007;
+        public static final int textView_invite=0x7f08000d;
     }
     public static final class layout {
         public static final int activity_game=0x7f030000;
@@ -69,27 +72,20 @@ public final class R {
         public static final int activity_main=0x7f070001;
     }
     public static final class string {
+        public static final int accept_button=0x7f04000c;
         public static final int app_name=0x7f040000;
+        public static final int decline_button=0x7f04000d;
         public static final int deregister_button=0x7f04000b;
-        public static final int eight=0x7f040013;
-        public static final int five=0x7f040010;
-        public static final int four=0x7f04000f;
         public static final int menu_settings=0x7f040001;
         public static final int multiplayer=0x7f040004;
         public static final int multiplayerfirst_hint=0x7f040008;
-        public static final int nine=0x7f040014;
-        public static final int one=0x7f04000c;
         public static final int register_button=0x7f04000a;
         public static final int registerfirst_hint=0x7f040007;
         public static final int search_button=0x7f040009;
         public static final int search_hint=0x7f040006;
-        public static final int seven=0x7f040012;
         public static final int singleplayer=0x7f040003;
-        public static final int six=0x7f040011;
-        public static final int three=0x7f04000e;
-        public static final int title_activity_game=0x7f040015;
+        public static final int title_activity_game=0x7f04000e;
         public static final int title_activity_main=0x7f040002;
-        public static final int two=0x7f04000d;
         public static final int username_hint=0x7f040005;
     }
     public static final class style {

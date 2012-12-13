@@ -93,8 +93,6 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 		}
     }
 	
-
-	
 	/////////////////////////////////////////////////
 	
 	@Override
@@ -108,6 +106,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			stopSelf();
 		}
 		
 		return sudokuServiceBinder;
@@ -152,6 +151,10 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 				userStateListener.onGameStarted(template);
 			}
 			return true;
+		case ERROR_MSG:
+			if(userStateListener != null) {
+				userStateListener.onError((String) msg.obj);
+			}
 		}
 		
 		return false;
@@ -166,7 +169,6 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 	}
 	
 	private final IBinder sudokuServiceBinder = new SudokuServerBinder();
-
 
 	
 	private final Handler serviceHandler = new Handler(this);
@@ -185,7 +187,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 		@Override
 		public void onLeftMessageReceived(Server server, LeftMessage message) {
-			// TODO send to sudoku handler 			
+			redirectToSudokuHandler(message);	
 		}
 
 		@Override
@@ -195,22 +197,12 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 		@Override
 		public void onNamedSetFieldMessageReceived(Server server, NamedSetFieldMessage message) {
-			if(sudokuHandler != null) {
-				// TODO: change this to message
-				
-				ServerSetFieldInfo info = new ServerSetFieldInfo(
-						 message.getRow(), message.getColumn(), 
-						 message.getValue(), message.getSender());
-				
-				sudokuHandler
-					.obtainMessage(SudokuHandler.ServerRequestSetDigit, info)
-					.sendToTarget();
-			}
+			redirectToSudokuHandler(message);
 		}
 
 		@Override
 		public void onErrorMesssageReceived(Server server, ErrorMessage message) {
-			// unused			
+			serviceHandler.obtainMessage(ERROR_MSG, message.getMessage()).sendToTarget();
 		}
 
 		@Override
@@ -245,14 +237,12 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 		@Override
 		public void onGameOverMessageReceived(Server server, GameOverMessage message) {
-			// TODO send to sudoku handler
-			
+			redirectToSudokuHandler(message);
 		}
 
 		@Override
 		public void onScoreMessageReceived(Server server, ScoreMessage message) {
-			// TODO send to sudoku handler
-			
+			redirectToSudokuHandler(message);			
 		}
 
 		@Override
@@ -260,6 +250,14 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 			serviceHandler
 				.obtainMessage(NEW_GAME_MSG, message.getSudokuField())
 				.sendToTarget();			
+		}
+		
+		private void redirectToSudokuHandler(Message message) {
+			if(sudokuHandler != null) {				
+				sudokuHandler
+					.obtainMessage(SudokuHandler.ServerRequestSetDigit, message)
+					.sendToTarget();
+			}
 		}
 		
 	};
