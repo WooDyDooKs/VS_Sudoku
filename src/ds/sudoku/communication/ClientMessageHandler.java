@@ -47,15 +47,31 @@ public interface ClientMessageHandler {
 	public void onDeregisterMessageReceived(Client client,
 			DeregisterMessage message);
 
-	/**
-	 * Will be invoked when a new invite message from target client is received.
-	 * 
-	 * @param client
-	 *            The {@link Client} who sent the message.
-	 * @param message
-	 *            The {@link InviteMessage} generated from the incoming data.
-	 */
-	public void onInviteMessageReceived(Client client, InviteMessage message);
+    /**
+     * Will be invoked when a new direct invite is received.
+     * 
+     * @param client
+     *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link InviteMessage} generated from the incoming
+     *            data.
+     */
+    public void onInviteMessageReceived(Client client,
+            InviteMessage message);
+
+    /**
+     * Will be invoked when a new random invite is received. This random invite
+     * represents a request to the server to match the inviter up with another
+     * participant waiting for a random match.
+     * 
+     * @param client
+     *            The {@link Client} who sent the message.
+     * @param message
+     *            The {@link InviteMessage} generated from the incoming
+     *            data.
+     */
+    public void onInviteMessageReceived(Client client,
+            InviteRandomMessage message);
 
 	/**
 	 * Will be invoked when a leave message is received.

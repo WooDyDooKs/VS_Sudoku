@@ -13,15 +13,17 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import ds.sudoku.communication.InviteMessage;
+import ds.sudoku.communication.InviteRandomMessage;
 
 /**
- * A json adapter used to serialize and deserialize {@link InviteMessage}.
+ * A json adapter used to serialize and deserialize {@link InviteRandomMessage}.
  * 
  * @author dalhai
  * 
  */
-public class InviteMessageAdapter extends MessageSerializer implements
-        JsonDeserializer<InviteMessage>, JsonSerializer<InviteMessage> {
+public class InviteRandomMessageAdapter extends MessageSerializer implements
+        JsonSerializer<InviteRandomMessage>,
+        JsonDeserializer<InviteRandomMessage> {
 
     /**
      * Deserialize the given {@link JsonElement} to a {@link InviteMessage}.
@@ -35,26 +37,18 @@ public class InviteMessageAdapter extends MessageSerializer implements
      * @return A new LeaveMessage built from the input.
      * @throws JsonParseException
      *             Thrown, if the given input does not provide the structure
-     *             needed by a {@link InviteMessage}
+     *             needed by a {@link InviteRandomMessage}
      */
     @Override
-    public InviteMessage deserialize(JsonElement jsonMessage, Type type,
-            JsonDeserializationContext context) throws JsonParseException {
+    public InviteRandomMessage deserialize(JsonElement jsonMessage, Type type,
+            JsonDeserializationContext message) throws JsonParseException {
         JsonObject jsonMessageObject = jsonMessage.getAsJsonObject();
 
         // First extract the message parts
         List<String> customValues = extractCustomValues(jsonMessageObject);
         Map<String, String> customProperties = extractCustomProperties(jsonMessageObject);
 
-        // Extract the name
-        String name = null;
-        if (jsonMessageObject.has(SerializationKeys.NAME_KEY)) {
-            JsonElement nameElement = jsonMessageObject
-                    .get(SerializationKeys.NAME_KEY);
-            name = nameElement.getAsString();
-        }
-
-        // Extract the difficulty
+        // Extract difficulty
         String difficulty = null;
         if (jsonMessageObject.has(SerializationKeys.DIFFICULTY_KEY)) {
             JsonElement difficultyElement = jsonMessageObject
@@ -62,11 +56,13 @@ public class InviteMessageAdapter extends MessageSerializer implements
             difficulty = difficultyElement.getAsString();
         }
 
-        return new InviteMessage(name, difficulty, customValues, customProperties);
+        return new InviteRandomMessage(difficulty, customValues,
+                customProperties);
     }
 
     /**
-     * Serialize the given {@link InviteMessage} into a {@link JsonElement}.
+     * Serialize the given {@link InviteRandomMessage} into a
+     * {@link JsonElement}.
      * 
      * @param message
      *            The message to be serialized.
@@ -77,22 +73,17 @@ public class InviteMessageAdapter extends MessageSerializer implements
      * @return A new JsonElement representing the message.
      */
     @Override
-    public JsonElement serialize(InviteMessage message, Type type,
+    public JsonElement serialize(InviteRandomMessage message, Type type,
             JsonSerializationContext context) {
         JsonElement jsonMessageElement = super
                 .serialize(message, type, context);
         JsonObject jsonMessageObject = jsonMessageElement.getAsJsonObject();
 
-        // Add the name
-        final String name = message.getName();
-        if (name != null) {
-            jsonMessageObject.addProperty(SerializationKeys.NAME_KEY, name);
-        }
-        
-        // Add the difficulty
+        // Serialize the difficulty
         final String difficulty = message.getDifficulty();
-        if(difficulty != null) {
-            jsonMessageObject.addProperty(SerializationKeys.DIFFICULTY_KEY, difficulty);
+        if (difficulty != null) {
+            jsonMessageObject.addProperty(SerializationKeys.DIFFICULTY_KEY,
+                    difficulty);
         }
 
         return jsonMessageObject;

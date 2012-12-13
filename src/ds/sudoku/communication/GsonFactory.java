@@ -8,6 +8,7 @@ import ds.sudoku.communication.serialization.DeregisterMessageAdapter;
 import ds.sudoku.communication.serialization.ErrorMessageAdapter;
 import ds.sudoku.communication.serialization.GameOverMessageAdapter;
 import ds.sudoku.communication.serialization.InviteMessageAdapter;
+import ds.sudoku.communication.serialization.InviteRandomMessageAdapter;
 import ds.sudoku.communication.serialization.LeaveMessageAdapter;
 import ds.sudoku.communication.serialization.LeftMessageAdapter;
 import ds.sudoku.communication.serialization.NACKMessageAdapter;
@@ -19,24 +20,27 @@ import ds.sudoku.communication.serialization.ScoreMessageAdapter;
 import ds.sudoku.communication.serialization.SetFieldMessageAdapter;
 
 /**
- * This factory is used to get a new Gson - Json parser with all the
- * type adapters already registered.
+ * This factory is used to get a new Gson - Json parser with all the type
+ * adapters already registered.
+ * 
  * @author dalhai
- *
+ * 
  */
 public enum GsonFactory {
     ;
-    
+
     private static Gson gson = null;
-    
+
     /**
-     * Creates a new Gson Json parser with all message type adapters
-     * already registered. Works both on Android and on normal java platforms.
+     * Creates a new Gson Json parser with all message type adapters already
+     * registered. Works both on Android and on normal java platforms.
+     * 
      * @return
      */
     public static Gson create() {
-        if(gson != null) return gson;
-        
+        if (gson != null)
+            return gson;
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(ACKMessage.class,
                 new ACKMessageAdapter());
@@ -50,8 +54,6 @@ public enum GsonFactory {
                 new ErrorMessageAdapter());
         gsonBuilder.registerTypeAdapter(GameOverMessage.class,
                 new GameOverMessageAdapter());
-        gsonBuilder.registerTypeAdapter(InviteMessage.class,
-                new InviteMessageAdapter());
         gsonBuilder.registerTypeAdapter(LeftMessage.class,
                 new LeftMessageAdapter());
         gsonBuilder.registerTypeAdapter(SetFieldMessage.class,
@@ -64,10 +66,14 @@ public enum GsonFactory {
                 new NewGameMessageAdapter());
         gsonBuilder.registerTypeAdapter(LeaveMessage.class,
                 new LeaveMessageAdapter());
+        gsonBuilder.registerTypeAdapter(InviteMessage.class,
+                new InviteMessageAdapter());
+        gsonBuilder.registerTypeAdapter(InviteRandomMessage.class,
+                new InviteRandomMessageAdapter());
         gsonBuilder.registerTypeAdapter(Message.class, new RawMessageAdapter());
 
         gson = gsonBuilder.create();
-        
+
         return gson;
     }
 }

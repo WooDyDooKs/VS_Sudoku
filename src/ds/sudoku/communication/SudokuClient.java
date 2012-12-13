@@ -117,7 +117,7 @@ public class SudokuClient implements Client {
                     if (line == null) {
                         continue;
                     }
-                    
+
                     // Push the message into the message queue
                     incomingMessageQueue.addLast(line);
 
@@ -206,11 +206,19 @@ public class SudokuClient implements Client {
                             messageHandler.onErrorMessageReceived(
                                     SudokuClient.this, message);
                         }
-                        // InviteMessage
+                        // Invite
                         else if (messageType.equals(InviteMessage.class
                                 .getName())) {
-                            InviteMessage message = json.fromJson(parsedLine,
-                                    InviteMessage.class);
+                            InviteMessage message = json.fromJson(
+                                    parsedLine, InviteMessage.class);
+                            messageHandler.onInviteMessageReceived(
+                                    SudokuClient.this, message);
+                        }
+                        // InviteRandom
+                        else if (messageType.equals(InviteRandomMessage.class
+                                .getName())) {
+                            InviteRandomMessage message = json.fromJson(
+                                    parsedLine, InviteRandomMessage.class);
                             messageHandler.onInviteMessageReceived(
                                     SudokuClient.this, message);
                         }
@@ -442,9 +450,9 @@ public class SudokuClient implements Client {
      * {@inheritDoc Client#invite(String)}
      */
     @Override
-    public void invite(String otherPlayer) {
+    public void invite(String inviter, String difficulty) {
         // Create the message
-        InviteMessage message = new InviteMessage(otherPlayer);
+        InviteMessage message = new InviteMessage(inviter, difficulty);
         // Add the message to the queue
         synchronized (outgoingMessageQueue) {
             outgoingMessageQueue.addLast(message);
@@ -551,7 +559,7 @@ public class SudokuClient implements Client {
             receiver = null;
             sender = null;
         } catch (InterruptedException e) {
-        	onDeath(e.getMessage());
+            onDeath(e.getMessage());
         } catch (IOException e) {
             onDeath(e.getMessage());
         }

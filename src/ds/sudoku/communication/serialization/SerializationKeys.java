@@ -114,4 +114,10 @@ public final class SerializationKeys {
      * confirmed message.
      */
     public static final String CONFIRMED_MESSAGE_KEY = "Confirmed";
+
+    /**
+     * This String will beu sed as the key for a property describing
+     * the difficulty of a sudoku game.
+     */
+    public static final String DIFFICULTY_KEY = "Difficulty";
 }
