@@ -17,7 +17,6 @@ import ds.sudoku.communication.Server;
 import ds.sudoku.communication.ServerFactory;
 import ds.sudoku.communication.ServerMessageHandler;
 import ds.sudoku.communication.SetFieldMessage;
-import ds.sudoku.logic.ServerSetFieldInfo;
 import ds.sudoku.logic.SudokuHandler;
 import ds.sudoku.logic.SudokuTemplate;
 import android.app.Service;
@@ -25,6 +24,9 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+
+import static ds.sudoku.logic.SudokuHandler.*;
+
 
 public class SudokuService extends Service implements Handler.Callback, DeathHandler<Server> {
 	
@@ -187,7 +189,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 		@Override
 		public void onLeftMessageReceived(Server server, LeftMessage message) {
-			redirectToSudokuHandler(message);	
+			redirectToSudokuHandler(ServerInfoPlayerLeft, message);	
 		}
 
 		@Override
@@ -197,7 +199,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 		@Override
 		public void onNamedSetFieldMessageReceived(Server server, NamedSetFieldMessage message) {
-			redirectToSudokuHandler(message);
+			redirectToSudokuHandler(ServerRequestSetDigit, message);
 		}
 
 		@Override
@@ -237,12 +239,12 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 		@Override
 		public void onGameOverMessageReceived(Server server, GameOverMessage message) {
-			redirectToSudokuHandler(message);
+			redirectToSudokuHandler(ServerInfoGameFinished, message);
 		}
 
 		@Override
 		public void onScoreMessageReceived(Server server, ScoreMessage message) {
-			redirectToSudokuHandler(message);			
+			redirectToSudokuHandler(ServerInfoLeaderChanged, message);			
 		}
 
 		@Override
@@ -252,10 +254,10 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 				.sendToTarget();			
 		}
 		
-		private void redirectToSudokuHandler(Message message) {
+		private void redirectToSudokuHandler(int what, Message message) {
 			if(sudokuHandler != null) {				
 				sudokuHandler
-					.obtainMessage(SudokuHandler.ServerRequestSetDigit, message)
+					.obtainMessage(what, message)
 					.sendToTarget();
 			}
 		}
