@@ -360,13 +360,13 @@ public class GameActivity extends Activity {
 	
 	//zero based
 	public int calculatePosition(int x, int y) {
-		return x + y*9;
+		return y + x*9;
 	}
 	
 	//zero based
 	public int[] calculateCoordinates(int pos) {
-		int x = pos % 9;
-		int y = (pos - x) / 9;
+		int y = pos % 9;
+		int x = (pos - y) / 9;
 		return new int[] {x,y}; 
 	}
 	
