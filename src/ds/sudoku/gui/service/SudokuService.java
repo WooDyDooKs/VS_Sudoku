@@ -36,6 +36,8 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 	private static final int INVITE_REJECTED_MSG	= 4;
 	private static final int NEW_GAME_MSG			= 5;
 	private static final int ERROR_MSG				= 6;
+	private static final int DEATH_MSG				= 7;
+
 
 	private Server server;
 	private volatile SudokuHandler sudokuHandler;
@@ -157,6 +159,13 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 			if(userStateListener != null) {
 				userStateListener.onError((String) msg.obj);
 			}
+			return true;
+		case DEATH_MSG:
+			if(userStateListener != null) {
+				userStateListener.onDeath((String) msg.obj);
+			}
+			this.stopSelf();
+			return true;
 		}
 		
 		return false;
@@ -164,10 +173,7 @@ public class SudokuService extends Service implements Handler.Callback, DeathHan
 
 	@Override
 	public void onDeath(Server instance, String message) {
-		if(userStateListener != null) {
-			userStateListener.onDeath(message);
-		}
-		this.stopSelf();
+		serviceHandler.obtainMessage(DEATH_MSG, message).sendToTarget();
 	}
 	
 	private final IBinder sudokuServiceBinder = new SudokuServerBinder();
