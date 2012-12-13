@@ -1,8 +1,11 @@
 package ds.sudoku.communication.serialization;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -11,13 +14,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
 import ds.sudoku.communication.GameOverMessage;
 
 /**
  * Message adapter used for serialization of {@link GameOverMessage}.
+ * 
  * @author WooDyDooKs
- *
+ * 
  */
 public class GameOverMessageAdapter extends MessageSerializer implements
         JsonSerializer<GameOverMessage>, JsonDeserializer<GameOverMessage> {
@@ -50,7 +53,22 @@ public class GameOverMessageAdapter extends MessageSerializer implements
                 .get(SerializationKeys.NAME_KEY);
         final String name = nameElement.getAsString();
 
-        return new GameOverMessage(name, customValues, customProperties);
+        // Extract the scores, if possible
+        Map<String, Integer> scores = null;
+        if (jsonMessageObject.has(SerializationKeys.SCORES_KEY)) {
+            scores = new HashMap<String, Integer>();
+            JsonElement scoresElement = jsonMessageObject
+                    .get(SerializationKeys.SCORES_KEY);
+            JsonObject scoresObject = scoresElement.getAsJsonObject();
+            final Set<Entry<String, JsonElement>> scoresEntries = scoresObject
+                    .entrySet();
+            for (Entry<String, JsonElement> scoresEntry : scoresEntries) {
+                scores.put(scoresEntry.getKey(), scoresEntry.getValue()
+                        .getAsInt());
+            }
+        }
+
+        return new GameOverMessage(name, scores, customValues, customProperties);
     }
 
     /**
@@ -74,6 +92,21 @@ public class GameOverMessageAdapter extends MessageSerializer implements
         // Add the string name
         jsonMessageObject.addProperty(SerializationKeys.NAME_KEY,
                 message.getName());
+
+        // Add the scores, if possible
+        final Map<String, Integer> scores = message.getScores();
+        if (scores != null) {
+            final Set<Entry<String, Integer>> scoresEntries = scores.entrySet();
+            final JsonObject scoresJsonObject = new JsonObject();
+            for (Entry<String, Integer> scoresEntry : scoresEntries) {
+                scoresJsonObject.addProperty(scoresEntry.getKey(),
+                        scoresEntry.getValue());
+            }
+            
+            jsonMessageObject.add(SerializationKeys.SCORES_KEY,
+                    scoresJsonObject);
+        }
+
         return jsonMessageObject;
     }
 
