@@ -84,4 +84,8 @@ public class Scoring {
 		return maxEntry.getKey();
 	}
 
+	public Map<String, Integer> getScoreTable() {
+		return scoreTable;
+	}
+
 }

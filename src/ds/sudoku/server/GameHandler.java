@@ -106,7 +106,7 @@ public class GameHandler implements Runnable {
 				client.setField(nextMove.getRow(), nextMove.getColumn(), nextMove.getValue(), user.getUsername());
 				
 				if(gameOver) {
-					client.gameOver(leadingUsername);
+					client.gameOver(leadingUsername, score.getScoreTable());
 				}
 			}
 			
