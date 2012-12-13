@@ -4,8 +4,14 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 
-//import ds.sudoku.communication.Server;
-import ds.sudoku.logic.android_workaround.*;
+import android.os.Handler;
+import android.os.Message;
+
+import ds.sudoku.communication.GameOverMessage;
+import ds.sudoku.communication.LeftMessage;
+import ds.sudoku.communication.NamedSetFieldMessage;
+import ds.sudoku.communication.ScoreMessage;
+import ds.sudoku.communication.Server;
 
 /**
  * I am currently testing things on my computer and not on android, so I had to add a
@@ -126,14 +132,23 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
 
             case ServerRequestSetDigit: {
                 NamedSetFieldMessage info = (NamedSetFieldMessage) msg.obj;
-                System.out.println("acho im richtige case und cast isch ok");
+                //System.out.println("acho im richtige case und cast isch ok");
+                if(info.getValue() == 0) {
+                    sudoku.removeDigit(info.getRow()-1, info.getColumn() -1,SudokuGrid.Trigger.user);
+                    //System.out.println("removing");
+                    break;
+                }
+                if(getValue(info.getRow(), info.getColumn()) != 0){
+                    sudoku.removeDigit(info.getRow()-1, info.getColumn()-1, SudokuGrid.Trigger.autoRemove);
+                }
                 SudokuGrid.Trigger trigger = null;
                 if(info.getSender().equals(username))  trigger = SudokuGrid.Trigger.user;
                 else trigger = SudokuGrid.Trigger.otherUser;
                 sudoku.setDigit(info.getRow() - 1,info.getColumn() - 1, info.getValue(), trigger);
-                System.out.println("received Instruction from Server to set " + info.getValue() + " at " + info.getRow() + "/" + info.getColumn());
+                //System.out.println("received Instruction from Server to set " + info.getValue() + " at " + info.getRow() + "/" + info.getColumn());
                 break;
             }
+
 
             case ServerInfoLeaderChanged: {
                 ScoreMessage info = (ScoreMessage) msg.obj;
@@ -147,19 +162,19 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
                 GameOverMessage info = (GameOverMessage) msg.obj;
                 for(SudokuChangeListener listener : listeners) {
                     //TODO: bruche no de score ide gameOver message
-                    listener.onGameFinished(info.getName(),0);
+                    listener.onGameFinished(info.getName(), 0);
                 }
                 break;
             }
 
             case ServerInfoPlayerLeft: {
-                LeaveMessage info = (LeaveMessage) msg.obj;
+                LeftMessage info = (LeftMessage) msg.obj;
                 for(SudokuChangeListener listener : listeners) {
-                    //TODO:
-                    //listener.onPlayerLeavesGame(info.);
+                    listener.onPlayerLeft(info.getOtherPlayer());
                 }
                 break;
             }
+            
 
             default : throw new RuntimeException("Forgot to add cases to switch or received faulty message");
 
