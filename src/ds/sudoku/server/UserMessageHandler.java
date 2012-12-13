@@ -5,10 +5,12 @@ import ds.sudoku.communication.Client;
 import ds.sudoku.communication.DeathHandler;
 import ds.sudoku.communication.DeregisterMessage;
 import ds.sudoku.communication.InviteMessage;
+import ds.sudoku.communication.InviteRandomMessage;
 import ds.sudoku.communication.LeaveMessage;
 import ds.sudoku.communication.Message;
 import ds.sudoku.communication.NACKMessage;
 import ds.sudoku.communication.SetFieldMessage;
+import ds.sudoku.exceptions.SudokuError;
 import ds.sudoku.exceptions.server.NonExistingUsername;
 import static ds.sudoku.server.ServerFrontend.userManagement;
 import static ds.sudoku.server.ServerFrontend.gamesManager;
@@ -37,25 +39,28 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 
 	@Override
 	public void onInviteMessageReceived(Client client, InviteMessage message) {
-		String receiver = message.getReciever();
-		String sender = message.getSender();
+		User invitedUser = userManagement.getUser(message.getName());
+		String invitedName = invitedUser.getUsername();
+		String invitingName = user.getUsername();
 		
-		if(receiver != null) {
-			Client receiverClient = userManagement.getUser(receiver).getClient();			
-			
-			// TODO this is a workaround
-			InviteMessage inv = new InviteMessage(user.getUsername(), receiver);
-			receiverClient.sendMessage(inv);
-			
-			ServerLog.l("Got InviteRequest from %s to %s.", sender, receiver);
-		} else {
-			// random request
-			User other = gamesManager.matchWithOtherRandomUser(user);
-			ServerLog.l("User %s requested random match.", sender);
+		if(invitingName.equals(invitedName)) {
+			user.getClient().sendError(
+					SudokuError.INVALID_SELF_INVITE, 
+					"You cannot invite yourself");
+			return;
+		}
+		
+		invitedUser.getClient().invite(invitingName, message.getDifficulty());
+		ServerLog.l("Got InviteRequest from %s to %s.", invitingName, invitedName);
+	}
+	
+	@Override
+	public void onInviteMessageReceived(Client client, InviteRandomMessage message) {
+		User other = gamesManager.matchWithOtherRandomUser(user);
+		ServerLog.l("User %s requested random match.", user.getUsername());
 
-			if(other != null) {
-				gamesManager.startNewGame(user, other);
-			}
+		if(other != null) {
+			gamesManager.startNewGame(user, other);
 		}
 	}
 
@@ -88,7 +93,7 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 		
 		if(ackMsg instanceof InviteMessage) {
 			InviteMessage invMsg = (InviteMessage) ackMsg;
-			User other = userManagement.getUser(invMsg.getSender());
+			User other = userManagement.getUser(invMsg.getName());
 			gamesManager.startNewGame(user, other);
 			
 			ServerLog.l("Starting new game with players %s and %s", user.getUsername(), other.getUsername());
@@ -101,7 +106,7 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 		
 		if(nackMsg instanceof InviteMessage) {
 			InviteMessage invMsg = (InviteMessage) nackMsg;
-			User other = userManagement.getUser(invMsg.getSender());
+			User other = userManagement.getUser(invMsg.getName());
 			other.getClient().NACK(invMsg);
 			
 			ServerLog.l("User %s requested invite from", user.getUsername(), other.getUsername());

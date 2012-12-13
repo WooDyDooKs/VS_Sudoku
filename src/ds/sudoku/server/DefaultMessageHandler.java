@@ -7,11 +7,11 @@ import ds.sudoku.communication.ClientMessageHandler;
 import ds.sudoku.communication.DeregisterMessage;
 import ds.sudoku.communication.ErrorMessage;
 import ds.sudoku.communication.InviteMessage;
+import ds.sudoku.communication.InviteRandomMessage;
 import ds.sudoku.communication.LeaveMessage;
 import ds.sudoku.communication.Message;
 import ds.sudoku.communication.NACKMessage;
 import ds.sudoku.communication.NamedSetFieldMessage;
-import ds.sudoku.communication.NewGameMessage;
 import ds.sudoku.communication.RegisterMessage;
 import ds.sudoku.communication.SetFieldMessage;
 import ds.sudoku.exceptions.SudokuError;
@@ -44,58 +44,72 @@ public class DefaultMessageHandler implements ClientMessageHandler {
 	@Override
 	public void onDeregisterMessageReceived(Client client,
 			DeregisterMessage message) {
-		// TODO Auto-generated method stub
-		
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected deregister message received");
 	}
 
 	@Override
 	public void onInviteMessageReceived(Client client, InviteMessage message) {
-		// TODO Auto-generated method stub
-		
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected invite message received");	}
+	
+	@Override
+	public void onInviteMessageReceived(Client client,
+			InviteRandomMessage message) {
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected invite message received");
 	}
 
 
 	@Override
 	public void onLeaveMessageReceived(Client client, LeaveMessage message) {
-		// TODO Auto-generated method stub
-		
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected leave message received");
 	}
 
 	@Override
 	public void onSetFieldMessageReceived(Client client, SetFieldMessage message) {
-		// TODO Auto-generated method stub
-		
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected set field message received");
 	}
 
 	@Override
 	public void onErrorMessageReceived(Client client, ErrorMessage message) {
-		// TODO Auto-generated method stub
-		
+		ServerLog.l("Client sent error: %s", message.getMessage());
 	}
 
 	@Override
 	public void onACKMessageReceived(Client client, ACKMessage message) {
-		// TODO Auto-generated method stub
-		
-	}
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected ack message received");	}
 
 	@Override
 	public void onNACKMessageReceived(Client client, NACKMessage message) {
-		// TODO Auto-generated method stub
-		
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected nack message received");
 	}
 
 	@Override
 	public void onNamedSetFieldMessageReceived(Client client,
 			NamedSetFieldMessage message) {
-		// TODO Auto-generated method stub
-		
+		client.sendError(
+				SudokuError.UNEXPECTED_MESSAGE_RECEIVED, 
+				"Unexpected set field message received");
 	}
 	
 	@Override
 	public void onRawMessageReceived(Client client, Message message) {
-		// TODO
+		
 	}
+
+
 	
 	
 }

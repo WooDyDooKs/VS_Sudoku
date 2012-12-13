@@ -40,8 +40,13 @@ public interface UserStateListener {
 	public void onGameStarted(SudokuTemplate template);
 	
 	/**
-	 * Called if the connection to the server got interuped.
+	 * Called if the connection to the server got interrupted.
 	 * After this was called, SudokuService.getServer() will return null.
 	 */
 	public void onDeath(String message);
+	
+	/**
+	 * Called if the server sent an error message.
+	 */
+	public void onError(String message);
 }
