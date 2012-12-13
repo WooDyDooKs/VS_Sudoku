@@ -15,5 +15,7 @@ public enum SudokuError {
 	/** Invited user does not exist */
 	USERNAME_DOES_NOT_EXIST,
 	/** Tried to set invalid field */ 
-	INVALID_FIELD_SET
+	INVALID_FIELD_SET,
+	/** User tried to invite themselves */
+	INVALID_SELF_INVITE
 }
