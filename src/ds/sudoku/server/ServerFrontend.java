@@ -1,12 +1,7 @@
 package ds.sudoku.server;
 
-import java.util.Arrays;
-import java.util.List;
-
 import ds.sudoku.communication.ClientListener;
 import ds.sudoku.communication.ConnectionManager;
-import ds.sudoku.communication.Server;
-import ds.sudoku.exceptions.server.AlreadyExistingUsername;
 
 
 public class ServerFrontend {

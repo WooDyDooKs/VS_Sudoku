@@ -2,9 +2,7 @@ package ds.sudoku.server;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
-import org.bson.types.BasicBSONList;
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBList;
