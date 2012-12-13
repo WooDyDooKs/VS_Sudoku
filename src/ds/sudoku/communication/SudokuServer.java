@@ -10,6 +10,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -216,14 +218,6 @@ public class SudokuServer implements Server {
 									GameOverMessage.class);
 							messageHandler.onGameOverMessageReceived(
 									SudokuServer.this, message);
-						}
-						// Invite
-						else if (messageType.equals(InviteMessage.class
-								.getName())) {
-							InviteMessage message = json.fromJson(parsedLine,
-									InviteMessage.class);
-							messageHandler.onInviteMessageReceived(SudokuServer.this,
-									message);
 						}
 						// NamedSetField
 						else if (messageType.equals(NamedSetFieldMessage.class
@@ -435,12 +429,7 @@ public class SudokuServer implements Server {
 	 */
 	@Override
 	public void invite(String invited) {
-		// Generate the message
-		InviteMessage message = new InviteMessage(null, invited);
-		// Lock the queue and add the message
-		synchronized (outgoingMessageQueue) {
-			outgoingMessageQueue.addLast(message);
-		}
+		throw new NotImplementedException();
 	}
 
 	/**
@@ -448,12 +437,7 @@ public class SudokuServer implements Server {
 	 */
 	@Override
 	public void requestRandomMatch() {
-		// Generate the message
-		InviteMessage message = new InviteMessage(null);
-		// Lock the queue and add the message
-		synchronized (outgoingMessageQueue) {
-			outgoingMessageQueue.addLast(message);
-		}
+		throw new NotImplementedException();
 	}
 
 	/**

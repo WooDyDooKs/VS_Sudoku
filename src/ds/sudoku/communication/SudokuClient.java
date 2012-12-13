@@ -10,6 +10,8 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -204,14 +206,6 @@ public class SudokuClient implements Client {
                             ErrorMessage message = json.fromJson(parsedLine,
                                     ErrorMessage.class);
                             messageHandler.onErrorMessageReceived(
-                                    SudokuClient.this, message);
-                        }
-                        // InviteMessage
-                        else if (messageType.equals(InviteMessage.class
-                                .getName())) {
-                            InviteMessage message = json.fromJson(parsedLine,
-                                    InviteMessage.class);
-                            messageHandler.onInviteMessageReceived(
                                     SudokuClient.this, message);
                         }
                         // LeaveMessage
@@ -443,12 +437,7 @@ public class SudokuClient implements Client {
      */
     @Override
     public void invite(String otherPlayer) {
-        // Create the message
-        InviteMessage message = new InviteMessage(otherPlayer);
-        // Add the message to the queue
-        synchronized (outgoingMessageQueue) {
-            outgoingMessageQueue.addLast(message);
-        }
+       throw new NotImplementedException();
     }
 
     /**

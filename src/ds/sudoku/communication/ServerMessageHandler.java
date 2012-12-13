@@ -81,16 +81,6 @@ public interface ServerMessageHandler {
 	public void onErrorMesssageReceived(Server server, ErrorMessage message);
 
 	/**
-	 * Will be invoked when a new invite message from the server is received.
-	 * 
-	 * @param server
-	 *            The {@link Server} who sent the message.
-	 * @param message
-	 *            The {@link InviteMessage} generated from the incoming data.
-	 */
-	public void onInviteMessageReceived(Server server, InviteMessage message);
-
-	/**
 	 * Will be invoked when a new ACK message from the server is received.
 	 * 
 	 * @param server

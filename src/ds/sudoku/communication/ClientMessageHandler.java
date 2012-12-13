@@ -48,16 +48,6 @@ public interface ClientMessageHandler {
 			DeregisterMessage message);
 
 	/**
-	 * Will be invoked when a new invite message from target client is received.
-	 * 
-	 * @param client
-	 *            The {@link Client} who sent the message.
-	 * @param message
-	 *            The {@link InviteMessage} generated from the incoming data.
-	 */
-	public void onInviteMessageReceived(Client client, InviteMessage message);
-
-	/**
 	 * Will be invoked when a leave message is received.
 	 * 
 	 * @param client
