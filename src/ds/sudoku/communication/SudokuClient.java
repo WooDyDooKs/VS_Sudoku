@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -209,8 +210,8 @@ public class SudokuClient implements Client {
                         // Invite
                         else if (messageType.equals(InviteMessage.class
                                 .getName())) {
-                            InviteMessage message = json.fromJson(
-                                    parsedLine, InviteMessage.class);
+                            InviteMessage message = json.fromJson(parsedLine,
+                                    InviteMessage.class);
                             messageHandler.onInviteMessageReceived(
                                     SudokuClient.this, message);
                         }
@@ -479,6 +480,19 @@ public class SudokuClient implements Client {
     public void gameOver(String winner) {
         // Create the message
         GameOverMessage message = new GameOverMessage(winner);
+        // Add the message to the queue
+        synchronized (outgoingMessageQueue) {
+            outgoingMessageQueue.addLast(message);
+        }
+    }
+
+    /**
+     * {@inheritDoc Client#gameOver(String, Map<String, Integer>)}
+     */
+    @Override
+    public void gameOver(String winner, Map<String, Integer> scores) {
+        // Generate the message
+        GameOverMessage message = new GameOverMessage(winner, scores);
         // Add the message to the queue
         synchronized (outgoingMessageQueue) {
             outgoingMessageQueue.addLast(message);

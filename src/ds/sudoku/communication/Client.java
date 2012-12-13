@@ -1,5 +1,7 @@
 package ds.sudoku.communication;
 
+import java.util.Map;
+
 import ds.sudoku.logic.SudokuTemplate;
 
 /**
@@ -59,6 +61,17 @@ public interface Client extends Connection, SudokuParticipant {
      *            the name of the player who won the game.
      */
     public void gameOver(String winner);
+
+    /**
+     * Sends the client a game over message indicating that someone won the
+     * game.
+     * 
+     * @param winner
+     *            The name of the player who won the game.
+     * @param scores
+     *            The scores of all players participating in the game.
+     */
+    public void gameOver(String winner, Map<String, Integer> scores);
 
     /**
      * Sends the client an update on the score. Since we do not want to reveal
