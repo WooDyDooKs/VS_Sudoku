@@ -1,5 +1,7 @@
 package ds.sudoku.logic;
 
+import java.util.Arrays;
+
 public class SudokuTemplate {
 	
 	public static final int CLUE_VALUE = 0;
@@ -25,6 +27,15 @@ public class SudokuTemplate {
 	
 	public int[][] getTemplate() {
 		return template;
+	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		for(int i=0; i<9; i++) {
+			result += Arrays.toString(template[i]) + "\n";
+		}
+		return result;
 	}
 
 }
