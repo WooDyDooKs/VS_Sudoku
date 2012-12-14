@@ -17,14 +17,18 @@
     <string name="decline_button">Decline</string>
 
     <string-array name="singleplayer_array">
+        <item>Very Easy</item>
         <item>Easy</item>
         <item>Medium</item>
         <item>Hard</item>
+        <item>Very Hard</item>
     </string-array>
     <string-array name="multiplayer_array">
-        <item>1on1</item>
-        <item>2on2</item>
-        <item>Deathmatch</item>
+        <item>Very Easy</item>
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+        <item>FIENDISH</item>
     </string-array>
 
     <string name="title_activity_game">GameActivity</string>
