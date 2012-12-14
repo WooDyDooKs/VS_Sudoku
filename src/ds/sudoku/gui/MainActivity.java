@@ -12,7 +12,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -148,14 +147,7 @@ public class MainActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindService(serviceConnection);
-	}
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return true;
-    }
-    
+	}    
     
     public void onClickSingleplayerRadio(View v) {
     	spinner.setAdapter(adapter_sp);
@@ -190,7 +182,11 @@ public class MainActivity extends Activity {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			sudokuService = (SudokuServerBinder) service;
 			sudokuService.setUserStateListener(userStateListener);
-			button_register.setEnabled(true);
+			if(sudokuService.getServer() != null) {
+				button_register.setEnabled(true);
+			} else {
+				Toast.makeText(MainActivity.this, "Could not connect to server.", Toast.LENGTH_LONG).show();
+			}
 		}
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
