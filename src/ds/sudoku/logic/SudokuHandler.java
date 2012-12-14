@@ -6,7 +6,6 @@ import java.util.List;
 
 import android.os.Handler;
 import android.os.Message;
-
 import ds.sudoku.communication.GameOverMessage;
 import ds.sudoku.communication.LeftMessage;
 import ds.sudoku.communication.NamedSetFieldMessage;
@@ -90,6 +89,7 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
         switch(msg.what) {
             case GUIRequestSetDigit: {
                 CellInfo cell = (CellInfo) msg.obj;
+                //if(getValue(cell.row, cell.column)==0 || setByUser(cell.row, cell.column) )
                 //cell.row--;cell.column--;
                 //System.out.println("sudoku: set digit " + cell.digit + " at " + cell.row + "/" + cell.column);
                 //sudoku.setDigit(cell, SudokuGrid.Trigger.user);
@@ -98,10 +98,12 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
                 break;
             }
             case GUIRequestRemoveDigit: {
+                //TODO:
                 CellInfo cell = (CellInfo) msg.obj;
-                cell.row--;cell.column--;
+                if(!setByUser(cell.row, cell.column)) break;
+                server.setField(cell.row,cell.column,0);
                 //System.out.println("sudoku: removed digit at " + cell.row + "/" + cell.column) ;
-                sudoku.removeDigit(cell, SudokuGrid.Trigger.user);
+                //sudoku.removeDigit(cell, SudokuGrid.Trigger.user);
                 //System.out.println("\t digit at " + cell.row + "/" + cell.column + " is now " + sudoku.getValue(cell.row,cell.column));
                 break;
             }
@@ -135,11 +137,11 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
                 //System.out.println("acho im richtige case und cast isch ok");
                 if(info.getValue() == 0) {
                     sudoku.removeDigit(info.getRow()-1, info.getColumn() -1,SudokuGrid.Trigger.user);
-                    //System.out.println("removing");
+                    System.out.println("removing");
                     break;
                 }
                 if(getValue(info.getRow(), info.getColumn()) != 0){
-                    sudoku.removeDigit(info.getRow()-1, info.getColumn()-1, SudokuGrid.Trigger.autoRemove);
+                    sudoku.removeDigit(info.getRow()-1, info.getColumn()-1, SudokuGrid.Trigger.autoComplete);
                 }
                 SudokuGrid.Trigger trigger = null;
                 if(info.getSender().equals(username))  trigger = SudokuGrid.Trigger.user;
@@ -148,7 +150,6 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
                 //System.out.println("received Instruction from Server to set " + info.getValue() + " at " + info.getRow() + "/" + info.getColumn());
                 break;
             }
-
 
             case ServerInfoLeaderChanged: {
                 ScoreMessage info = (ScoreMessage) msg.obj;
@@ -161,8 +162,7 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
             case ServerInfoGameFinished: {
                 GameOverMessage info = (GameOverMessage) msg.obj;
                 for(SudokuChangeListener listener : listeners) {
-                    //TODO: bruche no de score ide gameOver message
-                    listener.onGameFinished(info.getName(), 0);
+                    listener.onGameFinished(info.getName(), info.getScores());
                 }
                 break;
             }
@@ -174,7 +174,6 @@ public class SudokuHandler extends Handler implements SudokuInfo, SudokuChangePu
                 }
                 break;
             }
-            
 
             default : throw new RuntimeException("Forgot to add cases to switch or received faulty message");
 

@@ -7,6 +7,7 @@ public class Cell {
     final int column;
     int value = 0;
     BitSet candidates ;
+    BitSet candidatesRemovedByUser;
     final boolean isClue;
     boolean setByUser = false;
 
@@ -17,5 +18,7 @@ public class Cell {
         this.isClue = isClue;
         candidates = new BitSet(10);
         candidates.set(0,10,true);
+        candidatesRemovedByUser = new BitSet(10);
+        candidatesRemovedByUser.set(0, 10, false);
     }
 }

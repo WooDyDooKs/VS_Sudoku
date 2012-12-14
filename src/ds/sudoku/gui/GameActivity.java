@@ -1,5 +1,7 @@
 package ds.sudoku.gui;
 
+import java.util.Map;
+
 import ds.sudoku.gui.service.SudokuService;
 import ds.sudoku.gui.service.SudokuService.SudokuServerBinder;
 import ds.sudoku.logic.CellInfo;
@@ -92,11 +94,23 @@ public class GameActivity extends Activity {
 			Change change = e.change;
 			TextView tv = (TextView)gv_sudoku.findViewWithTag(pos);	//glocal variable
 			switch(change) {
-			case digitSet: 
+			case digitSet:								
 				tv.setTextAppearance(GameActivity.this, android.R.style.TextAppearance_Large);
 				tv.setText(Integer.toString(sudoku.getValue(row, column)));
-				if (grey[pos]) {	tv.setBackgroundColor(COLOR_D_BG_GREY); 	}
-				else {	tv.setBackgroundColor(COLOR_D_BG_WHITE);	}	
+				if (sudoku.getValue(row, column) == currentNumber) {
+					if (grey[pos]) {	tv.setBackgroundColor(COLOR_D_BG_GREY); 	}
+					else {	tv.setBackgroundColor(COLOR_D_BG_WHITE);	}
+				} else {
+					if (grey[pos]) {	tv.setBackgroundColor(COLOR_BG_4); 	}
+					else {	tv.setBackgroundColor(COLOR_BG_5);	}
+				}
+				if (sudoku.setByUser(row, column)) {
+					tv.setTextColor(COLOR_D_OWN);
+					Log.d("color", "blue");
+				} else {
+					tv.setTextColor(COLOR_D_OPPONENT);
+					Log.d("color", "red");
+				}
 				break;
 			case digitRemoved:
 				tv.setText("");
@@ -125,6 +139,7 @@ public class GameActivity extends Activity {
 				tv.setTextSize(10);
 				tv.setTextColor(COLOR_PM);
 				tv.setText(pmToString(sudoku.getCandidatesString(row, column)));
+				highlight();
 				break;
 			default:
 				break;
@@ -141,8 +156,11 @@ public class GameActivity extends Activity {
 			}
 		}
 		
-		public void onGameFinished(String winner, int score) {
-			Toast t = Toast.makeText(GameActivity.this, winner + " wins with " + Integer.toString(score) + " points.", Toast.LENGTH_LONG);
+		public void onGameFinished(String winner, Map<String, Integer> scores) {
+			Toast t = Toast.makeText(
+					GameActivity.this, winner + " wins with " + 
+					Integer.toString(scores.get(winner)) + " points.", 
+					Toast.LENGTH_LONG);
 			t.show();
 		}
 

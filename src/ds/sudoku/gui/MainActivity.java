@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
         adapter_sp = ArrayAdapter.createFromResource(this, R.array.singleplayer_array, android.R.layout.simple_spinner_item);
         adapter_mp = ArrayAdapter.createFromResource(this, R.array.multiplayer_array, android.R.layout.simple_spinner_item);
         spinner.setAdapter(adapter_mp);
-        spinner.setEnabled(false);
+        spinner.setEnabled(true);
         
         spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
         	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -94,18 +94,24 @@ public class MainActivity extends Activity {
         	    		editText_search.setHint(R.string.multiplayerfirst_hint);
         	    	}
         			switch ((int)id) {
-        				case 0:
-        					spModi = SpModi.Easy;
-        					break;
-        				case 1:
-        					spModi = SpModi.Medium;
-        					break;
-        				case 2:
-        					spModi = SpModi.Hard;
-        					break;
-        				default:
-        					spModi = SpModi.Easy;
-        					break;
+        			case 0:
+    					spModi = SpModi.Very_Easy;
+    					break;
+    				case 1:
+    					spModi = SpModi.Easy;
+    					break;
+    				case 2:
+    					spModi = SpModi.Medium;
+    					break;
+    				case 3:
+    					spModi = SpModi.Hard;
+    					break;
+    				case 4:
+    					spModi = SpModi.Very_Hard;
+    					break;
+    				default:
+    					spModi = SpModi.Easy;
+    					break;
         			}
         		} else if (radio_mp.isChecked()){
         			if(!registered) {
@@ -115,18 +121,25 @@ public class MainActivity extends Activity {
         	    		button_search.setEnabled(true);
         	    	}
         			switch ((int)id) {
-	    				case 0:
-	    					mpModi = MpModi._1on1;
-	    					break;
-	    				case 1:
-	    					mpModi = MpModi._2on2;
-	    					break;
-	    				case 2:
-	    					mpModi = MpModi.Deathmatch;
-	    					break;
-	    				default:
-	    					mpModi = MpModi.Deathmatch;
-	    			}
+    				case 0:
+    					mpModi = MpModi.Very_Easy;
+    					break;
+    				case 1:
+    					mpModi = MpModi.Easy;
+    					break;
+    				case 2:
+    					mpModi = MpModi.Medium;
+    					break;
+    				case 3:
+    					mpModi = MpModi.Hard;
+    					break;
+    				case 4:
+    					mpModi = MpModi.FIENDISH;
+    					break;
+    				default:
+    					mpModi = MpModi.Easy;
+    					break;
+    			}
         		}
             }
 
@@ -301,21 +314,25 @@ public class MainActivity extends Activity {
     	
     	// find Player
     	if(opponentUsername.isEmpty()) {
-    		sudokuService.getServer().requestRandomMatch("medium");
+    		sudokuService.getServer().requestRandomMatch(mpModi.toString());
     	} else {
-    		sudokuService.getServer().invite(opponentUsername, "medium");
+    		sudokuService.getServer().invite(opponentUsername, mpModi.toString());
     	}
     }
     
     enum SpModi {
+    	Very_Easy,
     	Easy,
     	Medium,
-    	Hard
+    	Hard,
+    	Very_Hard
     }
     
     enum MpModi {
-    	_1on1,
-    	_2on2,
-    	Deathmatch
+    	Very_Easy,
+    	Easy,
+    	Medium,
+    	Hard,
+    	FIENDISH
     }
 }
