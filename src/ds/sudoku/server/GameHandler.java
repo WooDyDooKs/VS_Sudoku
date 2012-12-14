@@ -93,6 +93,7 @@ public class GameHandler implements Runnable {
 			// calculate scores			
 			String leadingUsername = score.updateScore(nextMove);
 			User leadingUser = userManagement.getUser(leadingUsername);
+			String executingUsername = nextMove.getExecutingPlayer().getUsername();
 			
 			// update game
 			game.updateCell(nextMove);
@@ -107,7 +108,7 @@ public class GameHandler implements Runnable {
 						nextMove.getRow(), 
 						nextMove.getColumn(), 
 						nextMove.getValue(), 
-						user.getUsername());
+						executingUsername);
 	
 				if(gameOver) {
 					client.gameOver(leadingUsername, score.getScoreTable());
@@ -132,15 +133,29 @@ public class GameHandler implements Runnable {
 		int column = gameMove.getColumn();
 		int value = gameMove.getValue();
 		
+		if(game.getSolution().isClue(row, column)) {
+			return false;
+		}
+		
 		if(!(
 				row    >= 1 && row    <= 9 && 
-				column >= 1 && column <= 9 &&
-				value  >= 0 && value  <= 9 // value = 0 indicates a removal
+				column >= 1 && column <= 9
 		)) {
 			return false;
 		}
 		
-		return !game.getSolution().isClue(row, column);
+		if(value == 0) {
+			// removal of value
+			String executingUser = gameMove.getExecutingPlayer().getUsername();
+			String fieldOwner = game.getUser(row, column);
+			return executingUser.equals(fieldOwner);
+		}
+		
+		if(value < 1 || value > 9) {
+			return false;
+		}
+		
+		return true;
 	}
 
 
