@@ -36,7 +36,7 @@ solution_id = 0
 for sline in solution:
     if sline.startswith('Solution'):
         # read difficulty from solution line
-        difficulty = re.search(r'\[(\w+)\]', sline).group(1)
+        difficulty = re.search(r'\[([\w ]+)\]', sline).group(1)
         # check if we are reading the same puzzle
         if template.readline() != solution.readline():
             sys.stderr.write("solution and template do not match!")
