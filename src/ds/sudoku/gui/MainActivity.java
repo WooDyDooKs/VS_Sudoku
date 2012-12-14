@@ -258,13 +258,13 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public void onDeath(String message) {
-			Toast.makeText(MainActivity.this, "Disconnected.", Toast.LENGTH_LONG);
+			Toast.makeText(MainActivity.this, "Disconnected.", Toast.LENGTH_LONG).show();
 			finish();
 		}
 
 		@Override
 		public void onError(String message) {
-			Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG);		
+			Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();		
 		}
 	};
     
