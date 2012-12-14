@@ -44,7 +44,12 @@ public class GamesManager {
 		}
 		
 		if(!currentQueue.isEmpty()) {
-			return currentQueue.poll();
+			User other = currentQueue.poll();
+			if(other.getUsername().equals(p1.getUsername())) {
+				waitingQueue.add(p1);
+				return null;
+			}
+			return other;
 		} else {
 			waitingQueue.add(p1);
 			return null;
