@@ -56,11 +56,10 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 	
 	@Override
 	public void onInviteMessageReceived(Client client, InviteRandomMessage message) {
-		User other = gamesManager.matchWithOtherRandomUser(user);
+		User other = gamesManager.matchWithOtherRandomUser(user, message.getDifficulty());
 		ServerLog.l("User %s requested random match.", user.getUsername());
 
 		if(other != null) {
-			// TODO: search by difficulty
 			gamesManager.startNewGame(user, other, message.getDifficulty());
 		}
 	}
