@@ -25,11 +25,24 @@ public class DBHelper {
 	
 	public static DBObject getRandomDocument(BasicDBObject query, DBCollection coll) {
 		double random = Math.random();
+		double eps = 0.1;
 		
-		query.put("random", new BasicDBObject().append("$gte", random));		
+		// search in [rnd-eps, rnd+eps]
+		query.put("random", 
+				new BasicDBObject()
+					.append("$lte", random + eps)
+					.append("$gte", random - eps));	
+		
 		DBObject user = coll.findOne(query);
 		if(user == null) {
+			// search in [0, rnd]
 			query.put("random", new BasicDBObject().append("$lte", random));
+			user = coll.findOne(query);
+		}
+		
+		if(user == null) {
+			// search in [rnd, 1]
+			query.put("random", new BasicDBObject().append("$gte", random));
 			user = coll.findOne(query);
 		}
 		

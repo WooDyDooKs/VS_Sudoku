@@ -34,13 +34,26 @@ public class GamesManager {
 	
 	/** returns other random user if there is one, or null otherwise*/
 	public synchronized User matchWithOtherRandomUser(User p1, String difficulty) {
-		Queue<User> idleUsers = randomRequests.get(Difficulty.fromString(difficulty));
+		Difficulty requestedDiff = Difficulty.fromString(difficulty);
+		Queue<User> waitingQueue = randomRequests.get(requestedDiff);
 		
-		if(!idleUsers.isEmpty()) {
-			return idleUsers.poll();
+		Queue<User> currentQueue = waitingQueue;
+		for(Difficulty diff : Difficulty.values()) {
+			currentQueue = randomRequests.get(diff);
+			if(!currentQueue.isEmpty()) break;
+		}
+		
+		if(!currentQueue.isEmpty()) {
+			return currentQueue.poll();
 		} else {
-			idleUsers.add(p1);
+			waitingQueue.add(p1);
 			return null;
+		}
+	}
+	
+	public synchronized void removeRandomRequest(User user) {
+		for(Difficulty diff : Difficulty.values()) {
+			randomRequests.get(diff).remove(user);
 		}
 	}
 

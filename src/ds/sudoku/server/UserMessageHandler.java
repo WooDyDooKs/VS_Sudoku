@@ -27,6 +27,8 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 	public void onDeregisterMessageReceived(Client client, DeregisterMessage message) {
 		try {
 			userManagement.deregister(user);
+			gamesManager.removeRandomRequest(user);
+
 			client.setMessageHandler(ServerFrontend.messageHandler);
 			client.ACK(message);
 			
@@ -122,6 +124,7 @@ public class UserMessageHandler extends DefaultMessageHandler implements DeathHa
 			ServerLog.l("User %s disconnected.", user.getUsername());
 
 			userManagement.deregister(user);
+			gamesManager.removeRandomRequest(user);
 			Game game = user.getGame();
 			if(game != null) {
 				GameHandler handler = game.getHandler();
