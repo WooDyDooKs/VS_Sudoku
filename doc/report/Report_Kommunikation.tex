@@ -13,7 +13,7 @@ Nachrichten werden mit GSON \cite{gson}, einer Bibliothek für Java zur Serialis
 
 Client, Server und Listener sind intern gethreaded. Jedes Server- und Clientobjekt benutzt intern zwei Threads, einen um ausgehende Nachrichten zu versenden, den anderen, um eingehende Nachrichten zu verarbeiten. Da die eingehenden Nachrichten direkt verarbeitet und an den registrierten Handler weitergeleitet oder gebuffert werden, bis ein Handler registriert wurde, werden die Funktionen des Handlers auch im Empfängerthread aufgerufen. Dieser Umstand musste von den Komponenten, die auf den Kommunikations-Layer aufbauten beachtet werden. Der Listener benutzt einen einzelnen Thread, um neue Verbindungen zu akzeptieren und daraus neue Clients zu erstellen.
 
-\subsubsection{Sicherheit}
+\subsubsection{Zukunft}
 
 Unsere Nachrichten werden zur Zeit noch unverschlüsselt übermittelt. Das ermöglicht jedem Entwickler, einen eigenen Clienten für unser Sudoku zu entwickeln und die Sudokus algorithmisch zu lösen anstatt wirklich zu spielen. Für spätere Versionen und eine eventuelle Veröffentlichung müssten wir das noch anpassen. 
 
