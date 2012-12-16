@@ -1,0 +1,25 @@
+\subsection{Kommunikation}
+Bei unserem Kommunikations-layer achteten wir besonders darauf, dass die API für die darüber liegenden Layer so einfach und verständlich wie möglich ist. Dazu verwendeten wir ein einfaches System aus Listener, Client und Server und versteckten Threading und Networking innerhalb des Layers. 
+
+\subsubsection{Nachrichtenverarbeitung}
+
+Sowohl Server- als auch Client bieten die Möglichkeit an, einen eigenen Handler, der durch das \textit{ServerMessageHandler}-, bzw. \textit{ClientMessageHandler}-Interface beschrieben wird zu setzen. Ist ein Handler gesetzt, werden fortan alle eingehenden Nachrichten an ihn weitergeleitet. Die unterschiedlichen Nachrichtentypen werden direkt durch verschiedene Klassen in Java ausgedrückt. Wir haben also eine sehr breite Vererbungshierarchie an deren Wurzel die einfachste Nachricht, \textit{Message} steht. Die Instanzierung dieser Nachrichten wurde von uns weiter abstrahiert und direkt in den Client- bzw. Server eingebaut. Sollte dennoch die Notwendigkeit bestehen eine Nachricht von Hand aufzubauen, bieten Client und Server auch dazu entsprechende Methoden an. 
+
+\subsubsection{Nachrichtenformat}
+
+Nachrichten werden mit GSON \cite{gson}, einer Bibliothek für Java zur Serialisierung und Deserialisierung beliebiger Objekte in JSON, in einen JSON-String serialisiert und so direkt über Java-Sockets versendet. Wir haben uns für JSON entschieden, weil das Datenformat einfach zu verstehen ist. Die Wahl von JSON hat für uns das Debuggen stark vereinfacht, da wir die Nachrichten so ohne einen weiteren Zwischenschritt ansehen und analysieren konnten.
+
+\subsubsection{Threading und Networking}
+
+Client, Server und Listener sind intern gethreaded. Jedes Server- und Clientobjekt benutzt intern zwei Threads, einen um ausgehende Nachrichten zu versenden, den anderen, um eingehende Nachrichten zu verarbeiten. Da die eingehenden Nachrichten direkt verarbeitet und an den registrierten Handler weitergeleitet oder gebuffert werden, bis ein Handler registriert wurde, werden die Funktionen des Handlers auch im Empfängerthread aufgerufen. Dieser Umstand musste von den Komponenten, die auf den Kommunikations-Layer aufbauten beachtet werden. Der Listener benutzt einen einzelnen Thread, um neue Verbindungen zu akzeptieren und daraus neue Clients zu erstellen.
+
+\subsubsection{Zukunft}
+
+Unsere Nachrichten werden zur Zeit noch unverschlüsselt übermittelt. Das ermöglicht jedem Entwickler, einen eigenen Clienten für unser Sudoku zu entwickeln und die Sudokus algorithmisch zu lösen anstatt wirklich zu spielen. Für spätere Versionen und eine eventuelle Veröffentlichung müssten wir das noch anpassen. 
+
+% Zusätzlich noch der bibitem - Eintrag für das Template
+
+\bibitem{gson}
+{google-gson}.
+\newblock {A Java library to convert JSON to Java Objects and vice-versa}.
+\newblock {http://code.google.com/p/google-gson/}
